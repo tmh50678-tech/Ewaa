@@ -1,4 +1,5 @@
 
+
 import React, { useMemo, useState } from 'react';
 import type { PurchaseRequest } from '../types';
 import { RequestStatus } from '../types';
@@ -84,7 +85,13 @@ const KanbanBoard: React.FC<KanbanBoardProps> = ({ requests, onSelectRequest, se
   }, [requests, columns]);
 
   const sensors = useSensors(
-    useSensor(PointerSensor),
+    useSensor(PointerSensor, {
+      // Require the mouse to move by 8px before activating a drag.
+      // This allows for click events to be processed correctly on draggable items.
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     })

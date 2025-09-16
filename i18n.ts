@@ -186,7 +186,7 @@ const translations: Record<Language, Record<string, string>> = {
     'kanban.completed': 'Completed',
     'kanban.rejected': 'Rejected',
     // Filter Bar
-    'searchRequests': 'Search by ID, requester, or item...',
+    'searchRequests': 'Search by Ref #, ID, requester, or item...',
     'filterByBranch': 'Filter by Branch',
     'filterByDepartment': 'Filter by Department',
     'allBranches': 'All Branches',
@@ -194,6 +194,16 @@ const translations: Record<Language, Record<string, string>> = {
     'clearFilters': 'Clear Filters',
     'kanbanView': 'Kanban View',
     'listView': 'List View',
+    // Analytics
+    'analytics.awaitingMyAction': 'Awaiting My Action',
+    'analytics.totalPendingSpend': 'Total Pending Spend',
+    'analytics.overpricedItems': 'Overpriced Items (AI)',
+    'analytics.completedThisMonth': 'Completed This Month',
+    // AI Chat
+    'aiAssistant': 'AI Assistant',
+    'askMeAnything': 'Ask me anything about your requests...',
+    'aiSearchPlaceholder': 'e.g., "Show me pending requests in Riyadh"',
+    'aiGreeting': 'Hello! I am your procurement assistant. How can I help you find a request today?',
     // Errors
     'loginError': 'Invalid email or password. Please try again.',
     'error.selectInvoice': 'Please select an invoice file to analyze.',
@@ -323,7 +333,7 @@ const translations: Record<Language, Record<string, string>> = {
     'createNewRequest': 'إنشاء طلب شراء جديد',
     'department': 'القسم',
     'projects': 'المشاريع',
-    'housekeeping': 'أدوات النظافه',
+    'housekeeping': 'التدبير المنزلي',
     'maintenance': 'الصيانة',
     'f&b': 'الأغذية والمشروبات',
     'management': 'الإدارة',
@@ -384,7 +394,7 @@ const translations: Record<Language, Record<string, string>> = {
     'kanban.completed': 'مكتمل',
     'kanban.rejected': 'مرفوض',
     // Filter Bar
-    'searchRequests': 'ابحث بالرقم التعريفي، مقدم الطلب، أو الصنف...',
+    'searchRequests': 'ابحث بالرقم المرجعي، الرقم التعريفي، مقدم الطلب، أو الصنف...',
     'filterByBranch': 'تصفية حسب الفرع',
     'filterByDepartment': 'تصفية حسب القسم',
     'allBranches': 'كل الفروع',
@@ -392,6 +402,16 @@ const translations: Record<Language, Record<string, string>> = {
     'clearFilters': 'مسح الفلاتر',
     'kanbanView': 'عرض كانبان',
     'listView': 'عرض القائمة',
+    // Analytics
+    'analytics.awaitingMyAction': 'بانتظار إجراء مني',
+    'analytics.totalPendingSpend': 'إجمالي المصروفات المعلقة',
+    'analytics.overpricedItems': 'أصناف بأسعار مبالغ فيها (AI)',
+    'analytics.completedThisMonth': 'طلبات مكتملة هذا الشهر',
+    // AI Chat
+    'aiAssistant': 'المساعد الذكي',
+    'askMeAnything': 'اسألني أي شيء عن طلباتك...',
+    'aiSearchPlaceholder': 'مثال: "أظهر لي الطلبات المعلقة في الرياض"',
+    'aiGreeting': 'مرحباً! أنا مساعد المشتريات الخاص بك. كيف يمكنني مساعدتك في العثور على طلب اليوم؟',
     // Errors
     'loginError': 'البريد الإلكتروني أو كلمة المرور غير صحيحة. يرجى المحاولة مرة أخرى.',
     'error.selectInvoice': 'الرجاء تحديد ملف فاتورة لتحليله.',

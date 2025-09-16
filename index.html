@@ -6,52 +6,115 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>EWAA HOTELS | Procurement System</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
         theme: {
           extend: {
+            fontFamily: {
+              sans: ['Poppins', 'sans-serif'],
+            },
             colors: {
-              primary: {
-                '50': '#f0f9ff',
-                '100': '#e0f2fe',
-                '200': '#bae6fd',
-                '300': '#7dd3fc',
-                '400': '#38bdf8',
-                '500': '#0ea5e9',
-                '600': '#0284c7',
-                '700': '#0369a1',
-                '800': '#075985',
-                '900': '#0c4a6e',
-                '950': '#082f49',
+              slate: {
+                '50': '#f8fafc',
+                '100': '#f1f5f9',
+                '200': '#e2e8f0',
+                '300': '#cbd5e1',
+                '400': '#94a3b8',
+                '500': '#64748b',
+                '600': '#475569',
+                '700': '#334155',
+                '800': '#1e293b',
+                '900': '#0f172a',
+                '950': '#0D0C1D',
               },
-              accent: {
-                '50': '#fff7ed',
-                '100': '#ffedd5',
-                '200': '#fed7aa',
-                '300': '#fdba74',
-                '400': '#fb923c',
-                '500': '#f97316',
-                '600': '#ea580c',
-                '700': '#c2410c',
-                '800': '#9a3412',
-                '900': '#7c2d12',
-                '950': '#431407',
+              cyan: {
+                '50': '#ecfeff',
+                '100': '#cffafe',
+                '200': '#a5f3fc',
+                '300': '#67e8f9',
+                '400': '#22d3ee',
+                '500': '#06b6d4',
+                '600': '#0891b2',
+                '700': '#0e7490',
+                '800': '#155e75',
+                '900': '#164e63',
+                '950': '#083344',
+                'glow': '#00F5D4', // Accent Glow
               },
+              pink: {
+                '50': '#fdf2f8',
+                '100': '#fce7f3',
+                '200': '#fbcfe8',
+                '300': '#f9a8d4',
+                '400': '#f472b6',
+                '500': '#ec4899',
+                '600': '#db2777',
+                '700': '#be185d',
+                '800': '#9d174d',
+                '900': '#831843',
+                '950': '#500724',
+                'glow': '#FF00E4', // Secondary Accent Glow
+              },
+            },
+            boxShadow: {
+              'glow-cyan': '0 0 15px rgba(0, 245, 212, 0.6), 0 0 5px rgba(0, 245, 212, 0.8)',
+              'glow-pink': '0 0 15px rgba(255, 0, 228, 0.6), 0 0 5px rgba(255, 0, 228, 0.8)',
             },
             keyframes: {
               'fade-in-up': {
                 '0%': { opacity: '0', transform: 'translateY(20px)' },
                 '100%': { opacity: '1', transform: 'translateY(0)' },
               },
+              'background-pan': {
+                '0%': { background-position: '0% 50%' },
+                '50%': { background-position: '100% 50%' },
+                '100%': { background-position: '0% 50%' },
+              }
             },
             animation: {
-              'fade-in-up': 'fade-in-up 0.4s ease-out forwards',
+              'fade-in-up': 'fade-in-up 0.5s ease-out forwards',
+              'background-pan': 'background-pan 30s ease infinite',
             },
           }
         }
       }
     </script>
+    <style>
+      html, body {
+        font-family: 'Poppins', sans-serif;
+        color: #F8F8FF; /* Ghost White */
+        background-color: #0D0C1D;
+        background-image: linear-gradient(125deg, #0D0C1D, #1c1a36, #0D0C1D);
+        background-size: 400% 400%;
+        animation: background-pan 30s ease infinite;
+      }
+      /* Custom Scrollbar for a futuristic look */
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #1e293b;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #475569;
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #06b6d4;
+      }
+      /* Glassmorphism base for panels */
+      .glass-panel {
+        background-color: rgba(28, 26, 53, 0.6);
+        -webkit-backdrop-filter: blur(10px);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(6, 182, 212, 0.2);
+      }
+    </style>
   <script type="importmap">
 {
   "imports": {
@@ -68,7 +131,7 @@
 }
 </script>
 </head>
-  <body class="bg-gray-100">
+  <body class="text-white">
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
   </body>

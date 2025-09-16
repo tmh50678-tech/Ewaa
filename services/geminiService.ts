@@ -1,7 +1,9 @@
 // FIX: Replaced placeholder content with Gemini API service implementation.
 
 import { GoogleGenAI, Type } from "@google/genai";
-import type { PurchaseRequest, AIAnalysisResult, Invoice, SalesRepresentative, Supplier, PurchaseRequestItem, SupplierSuggestion } from '../types';
+import type { PurchaseRequest, AIAnalysisResult, Invoice, SalesRepresentative, Supplier, PurchaseRequestItem, SupplierSuggestion, AISearchFilters, User, Branch } from '../types';
+import { RequestStatus } from '../types';
+import { DEPARTMENTS } from '../constants';
 
 if (!process.env.API_KEY) {
     // This is a mock implementation for development without an API key.
@@ -257,4 +259,105 @@ export const generateMonthlyReport = async (
     });
 
     return response.text;
+};
+
+const searchFiltersSchema = {
+    type: Type.OBJECT,
+    properties: {
+        status: {
+            type: Type.ARRAY,
+            description: "An array of statuses to filter by. Possible values are: " + Object.values(RequestStatus).join(', '),
+            items: { type: Type.STRING }
+        },
+        branchId: {
+            type: Type.STRING,
+            description: "The ID of the branch to filter by."
+        },
+        department: {
+            type: Type.STRING,
+            description: "The department to filter by. Possible values are: " + DEPARTMENTS.join(', ')
+        },
+        searchTerm: {
+            type: Type.STRING,
+            description: "A general search term for item names, requester names, or reference numbers."
+        },
+        minTotal: {
+            type: Type.NUMBER,
+            description: "The minimum total estimated cost."
+        },
+        maxTotal: {
+            type: Type.NUMBER,
+            description: "The maximum total estimated cost."
+        },
+        requesterId: {
+            type: Type.NUMBER,
+            description: "The ID of the user who made the request. For queries like 'my requests'."
+        }
+    }
+};
+
+export const getAIsearchFilters = async (
+    query: string,
+    currentUser: User,
+    branches: Branch[]
+): Promise<{ filters: AISearchFilters; responseText: string }> => {
+    if (!process.env.API_KEY) {
+        // MOCK IMPLEMENTATION
+        console.log("Using mock getAIsearchFilters response.");
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        let filters: AISearchFilters = {};
+        if (query.toLowerCase().includes('completed')) filters.status = [RequestStatus.COMPLETED];
+        if (query.toLowerCase().includes('jeddah')) filters.branchId = 'branch-2';
+        if (query.toLowerCase().includes('riyadh')) filters.branchId = 'branch-1';
+        if (query.toLowerCase().includes('my requests')) filters.requesterId = currentUser.id;
+
+        return Promise.resolve({
+            filters,
+            responseText: `Okay, I'm applying the following filters based on your request: ${JSON.stringify(filters)}`
+        });
+    }
+
+    const model = 'gemini-2.5-flash';
+
+    const prompt = `
+        You are an AI assistant for a hotel procurement system. Your task is to understand a user's natural language query and translate it into a JSON filter object.
+        You must also provide a short, friendly confirmation message in the user's language (the query will be in English or Arabic).
+
+        Here is the context you need:
+        - The current user is: ${JSON.stringify({id: currentUser.id, name: currentUser.name, role: currentUser.role})}
+        - Available branches: ${JSON.stringify(branches.map(b => ({id: b.id, name: b.name, city: b.city})))}
+        - Available departments: ${DEPARTMENTS.join(', ')}
+        - Available statuses: ${Object.values(RequestStatus).join(', ')}
+
+        User's query: "${query}"
+
+        Analyze the user's query and generate a JSON object with two keys: "filters" and "responseText".
+        - "filters": This should be a JSON object matching the provided schema. Only include keys for the filters the user mentioned.
+          - For queries like "my requests" or "طلباتي", you should use the requesterId from the current user context.
+          - If the user mentions a city name (e.g., "Riyadh", "جدة"), find the corresponding branchId from the available branches.
+          - If the user mentions a price like "over 5000 SAR" or "أكثر من ٥٠٠٠ ريال", set minTotal to 5000.
+          - If the user mentions a status like "pending" or "معلقة", you can include multiple relevant pending statuses in the status array.
+        - "responseText": A friendly confirmation message in the same language as the query (English or Arabic). For example: "Sure, showing pending requests from the Riyadh branch." or "بالتأكيد، إليك الطلبات المكتملة التي تزيد عن 5000 ريال."
+
+        Respond ONLY with the JSON object.
+    `;
+
+    const response = await ai.models.generateContent({
+        model,
+        contents: prompt,
+        config: {
+            responseMimeType: "application/json",
+            responseSchema: {
+                type: Type.OBJECT,
+                properties: {
+                    filters: searchFiltersSchema,
+                    responseText: { type: Type.STRING }
+                },
+                required: ["filters", "responseText"]
+            }
+        }
+    });
+
+    const json = JSON.parse(response.text);
+    return json as { filters: AISearchFilters; responseText: string };
 };

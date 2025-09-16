@@ -1,3 +1,4 @@
+
 import React from 'react';
 import FocusTrap from 'focus-trap-react';
 
@@ -24,10 +25,10 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children, size = 'lg' })
 
     return (
         <FocusTrap active={isOpen}>
-            <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center p-4" role="dialog" aria-modal="true">
-                <div className={`bg-white rounded-lg shadow-2xl w-full ${sizeClasses[size]} max-h-full overflow-y-auto`}>
+            <div className="fixed inset-0 bg-slate-950 bg-opacity-70 z-50 flex justify-center items-center p-4 animate-fade-in-up" role="dialog" aria-modal="true">
+                <div className={`glass-panel rounded-lg shadow-2xl w-full ${sizeClasses[size]} max-h-full overflow-y-auto`}>
                     <div className="p-4 sm:p-6 relative">
-                        <button onClick={onClose} className="absolute top-4 right-4 rtl:right-auto rtl:left-4 text-gray-400 hover:text-gray-600 text-2xl z-10" aria-label="Close">
+                        <button onClick={onClose} className="absolute top-4 right-4 rtl:right-auto rtl:left-4 text-slate-400 hover:text-white text-3xl z-10" aria-label="Close">
                             &times;
                         </button>
                         {children}

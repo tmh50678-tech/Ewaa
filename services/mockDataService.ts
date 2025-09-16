@@ -97,6 +97,7 @@ export const SUPPLIERS = INITIAL_SUPPLIERS;
 export const MOCK_REQUESTS: PurchaseRequest[] = [
   {
     id: 'pr-123456',
+    referenceNumber: 1001,
     requester: INITIAL_USERS[0],
     status: RequestStatus.PENDING_HM_APPROVAL,
     items: [
@@ -113,6 +114,7 @@ export const MOCK_REQUESTS: PurchaseRequest[] = [
   },
   {
     id: 'pr-789012',
+    referenceNumber: 1002,
     requester: INITIAL_USERS[0],
     status: RequestStatus.COMPLETED,
     items: [
@@ -131,6 +133,7 @@ export const MOCK_REQUESTS: PurchaseRequest[] = [
   },
   {
     id: 'pr-345678',
+    referenceNumber: 1003,
     requester: INITIAL_USERS[1],
     status: RequestStatus.DRAFT,
     items: [
@@ -144,6 +147,7 @@ export const MOCK_REQUESTS: PurchaseRequest[] = [
   },
    {
     id: 'pr-999999',
+    referenceNumber: 1004,
     requester: INITIAL_USERS[0],
     status: RequestStatus.PENDING_INVOICE,
     items: [

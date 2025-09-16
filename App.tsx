@@ -1,5 +1,6 @@
 
 
+
 import React, { createContext, useState, useContext } from 'react';
 import { Routes, Route, useNavigate, Navigate } from 'react-router-dom';
 import type { PurchaseRequest, User, RoleDefinition, Branch, CatalogItem, Supplier, SalesRepresentative } from './types';
@@ -56,7 +57,7 @@ const AppContent: React.FC = () => {
   const { currentUser, toast, setToast, language } = useAppContext();
 
   return (
-    <div className="min-h-screen bg-gray-50" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+    <div className="min-h-screen" dir={language === 'ar' ? 'rtl' : 'ltr'}>
         <Routes>
             <Route path="/login" element={
                 !currentUser ? <Login /> : <Navigate to="/dashboard" replace />

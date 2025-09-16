@@ -1,5 +1,6 @@
 
 
+
 import React, { useState, useRef, useEffect } from 'react';
 import type { PurchaseRequest, PurchaseRequestItem, SupplierSuggestion } from '../types';
 import { RequestStatus } from '../types';
@@ -39,7 +40,8 @@ const PurchaseRequestForm: React.FC<PurchaseRequestFormProps> = ({ onClose }) =>
         branches, 
         showToast: onShowToast, 
         itemCatalog, 
-        suppliers 
+        suppliers,
+        purchaseRequests,
     } = useAppContext();
 
     // FIX: Corrected the type of the 'items' state to be an array of items (Omit<PurchaseRequestItem, 'id'>[]),
@@ -135,8 +137,12 @@ const PurchaseRequestForm: React.FC<PurchaseRequestFormProps> = ({ onClose }) =>
             id: `item-${Date.now()}-${index}`,
         }));
 
+        const maxRefNum = purchaseRequests.reduce((max, req) => req.referenceNumber > max ? req.referenceNumber : max, 1000);
+        const newReferenceNumber = maxRefNum + 1;
+
         const newRequest: PurchaseRequest = {
             id: `pr-${Date.now()}`,
+            referenceNumber: newReferenceNumber,
             requester: currentUser,
             status: department === 'Projects' ? RequestStatus.PENDING_QS_APPROVAL : RequestStatus.PENDING_HM_APPROVAL,
             items: finalItems,
@@ -180,45 +186,48 @@ const PurchaseRequestForm: React.FC<PurchaseRequestFormProps> = ({ onClose }) =>
         }
     };
 
+    const inputStyles = "block w-full px-4 py-3 bg-slate-900/50 border-b-2 border-slate-500 rounded-t-md placeholder-slate-400 focus:outline-none focus:ring-0 focus:border-cyan-400 sm:text-sm transition";
+    const readOnlyInputStyles = "block w-full px-4 py-3 bg-slate-800/50 border-b-2 border-slate-600 rounded-t-md text-slate-400 cursor-not-allowed text-lg";
+
     return (
-        <div className="bg-white rounded-lg h-full">
-            <div className="flex justify-between items-center mb-6 sticky top-0 bg-white py-2 border-b">
-                <h2 className="text-2xl font-bold text-gray-800 flex-grow text-center md:text-left">{t('createNewRequest')}</h2>
+        <div className="h-full">
+            <div className="flex justify-between items-center mb-6 sticky top-0 py-2 border-b border-cyan-500/20">
+                <h2 className="text-2xl font-bold text-white flex-grow text-center md:text-left">{t('createNewRequest')}</h2>
             </div>
             <form onSubmit={handleSubmit} className="space-y-6">
                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                        <label htmlFor="branch" className="block text-base font-bold mb-2 text-gray-900">{t('branch')}</label>
+                        <label htmlFor="branch" className="block text-base font-bold mb-2 text-slate-200">{t('branch')}</label>
                          <select
                             id="branch"
                             value={branchId}
                             onChange={(e) => setBranchId(e.target.value)}
                             required
                             disabled={userBranches.length <= 1}
-                            className="block w-full px-4 py-3 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-lg text-gray-900 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                            className={`${inputStyles} disabled:bg-slate-800/50 disabled:cursor-not-allowed`}
                         >
                             {userBranches.map(branch => (
-                                <option key={branch.id} value={branch.id}>{branch.name}</option>
+                                <option key={branch.id} value={branch.id} className="bg-slate-900">{branch.name}</option>
                             ))}
                         </select>
                     </div>
                     <div>
-                        <label htmlFor="department" className="block text-base font-bold mb-2 text-gray-900">{t('department')}</label>
+                        <label htmlFor="department" className="block text-base font-bold mb-2 text-slate-200">{t('department')}</label>
                         <select
                             id="department"
                             value={department}
                             onChange={(e) => setDepartment(e.target.value)}
                             required
-                            className="block w-full px-4 py-3 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-lg text-gray-900"
+                            className={inputStyles}
                         >
                             {DEPARTMENTS.map(dep => (
-                                <option key={dep} value={dep}>{t(dep.toLowerCase().replace('&', 'and'))}</option>
+                                <option key={dep} value={dep} className="bg-slate-900">{t(dep.toLowerCase().replace('&', 'and'))}</option>
                             ))}
                         </select>
                     </div>
                 </div>
                 
-                <h3 className="text-xl font-semibold text-gray-900 border-b pb-2">{t('items')}</h3>
+                <h3 className="text-xl font-semibold text-white border-b border-cyan-500/20 pb-2">{t('items')}</h3>
                 
                 <div className="space-y-4" ref={dropdownRef}>
                     {items.map((item, index) => {
@@ -227,13 +236,13 @@ const PurchaseRequestForm: React.FC<PurchaseRequestFormProps> = ({ onClose }) =>
                             : itemCatalog;
 
                         return (
-                        <div key={index} className="p-6 border border-gray-200 rounded-xl relative space-y-4 bg-slate-50 shadow">
+                        <div key={index} className="p-6 border border-slate-700 rounded-xl relative space-y-4 bg-slate-800/50 shadow-lg">
                              {items.length > 1 && (
-                                <button type="button" onClick={() => handleRemoveItem(index)} className="absolute top-3 right-3 rtl:right-auto rtl:left-3 text-red-500 hover:text-red-700 font-bold text-xl">&times;</button>
+                                <button type="button" onClick={() => handleRemoveItem(index)} className="absolute top-3 right-3 rtl:right-auto rtl:left-3 text-pink-500 hover:text-pink-400 font-bold text-2xl">&times;</button>
                             )}
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div className="relative">
-                                    <label className="block text-base font-bold mb-2 text-gray-900">{t('itemName')}</label>
+                                    <label className="block text-base font-bold mb-2 text-slate-200">{t('itemName')}</label>
                                     <input 
                                         type="text" 
                                         value={item.name} 
@@ -242,14 +251,14 @@ const PurchaseRequestForm: React.FC<PurchaseRequestFormProps> = ({ onClose }) =>
                                         placeholder={t('searchItemPlaceholder')}
                                         required 
                                         autoComplete="off"
-                                        className="block w-full px-4 py-3 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-lg text-gray-900" />
+                                        className={inputStyles} />
                                     {activeDropdown === index && (
-                                        <ul className="absolute z-10 w-full bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto mt-1">
+                                        <ul className="absolute z-10 w-full bg-slate-800 border border-slate-600 rounded-md shadow-lg max-h-60 overflow-auto mt-1">
                                             {filteredCatalog.map(catalogItem => (
                                                 <li
                                                     key={catalogItem.name}
                                                     onClick={() => handleSelectItem(index, catalogItem)}
-                                                    className="px-3 py-2 cursor-pointer hover:bg-primary-100 text-gray-900"
+                                                    className="px-3 py-2 cursor-pointer hover:bg-cyan-900/50 text-white"
                                                 >
                                                     {catalogItem.name}
                                                 </li>
@@ -258,32 +267,32 @@ const PurchaseRequestForm: React.FC<PurchaseRequestFormProps> = ({ onClose }) =>
                                     )}
                                 </div>
                                 <div>
-                                    <label className="block text-base font-bold mb-2 text-gray-900">{t('category')}</label>
-                                    <input type="text" value={item.category} readOnly className="block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm bg-gray-100 text-gray-500 cursor-not-allowed text-lg" />
+                                    <label className="block text-base font-bold mb-2 text-slate-200">{t('category')}</label>
+                                    <input type="text" value={item.category} readOnly className={readOnlyInputStyles} />
                                 </div>
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 <div>
-                                    <label className="block text-base font-bold mb-2 text-gray-900">{t('quantity')}</label>
-                                    <input type="number" value={item.quantity} min="1" onChange={e => handleItemChange(index, 'quantity', Number(e.target.value))} required className="block w-full px-4 py-3 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-lg text-gray-900" />
+                                    <label className="block text-base font-bold mb-2 text-slate-200">{t('quantity')}</label>
+                                    <input type="number" value={item.quantity} min="1" onChange={e => handleItemChange(index, 'quantity', Number(e.target.value))} required className={inputStyles} />
                                 </div>
                                 <div>
-                                    <label className="block text-base font-bold mb-2 text-gray-900">{t('unit')}</label>
-                                    <input type="text" value={item.unit} readOnly className="block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm bg-gray-100 text-gray-500 cursor-not-allowed text-lg" />
+                                    <label className="block text-base font-bold mb-2 text-slate-200">{t('unit')}</label>
+                                    <input type="text" value={item.unit} readOnly className={readOnlyInputStyles} />
                                 </div>
                                 <div>
-                                    <label className="block text-base font-bold mb-2 text-gray-900">{t('estimatedCost')}</label>
-                                    <input type="number" value={item.estimatedCost} readOnly className="block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm bg-gray-100 text-gray-500 cursor-not-allowed text-lg" />
+                                    <label className="block text-base font-bold mb-2 text-slate-200">{t('estimatedCost')}</label>
+                                    <input type="number" value={item.estimatedCost} readOnly className={readOnlyInputStyles} />
                                 </div>
                             </div>
                              <div>
-                                <label className="block text-base font-bold mb-2 text-gray-900">{t('justification')}</label>
+                                <label className="block text-base font-bold mb-2 text-slate-200">{t('justification')}</label>
                                 <textarea 
                                     value={item.justification} 
                                     onChange={e => handleItemChange(index, 'justification', e.target.value)} 
                                     required
                                     rows={2}
-                                    className="block w-full px-4 py-3 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-lg text-gray-900"
+                                    className={inputStyles}
                                 />
                             </div>
                         </div>
@@ -291,45 +300,45 @@ const PurchaseRequestForm: React.FC<PurchaseRequestFormProps> = ({ onClose }) =>
                     })}
                 </div>
                 
-                <div className="border-t pt-4">
-                    <button type="button" onClick={handleAddItem} className="text-primary-600 hover:text-primary-800 font-semibold">
+                <div className="border-t border-cyan-500/20 pt-4">
+                    <button type="button" onClick={handleAddItem} className="text-cyan-400 hover:text-cyan-300 font-semibold">
                         {t('addItem')}
                     </button>
                 </div>
 
-                <div className="border-t pt-4">
-                    <h3 className="text-xl font-semibold text-gray-900 mb-2">{t('aiSupplierSuggestions')}</h3>
+                <div className="border-t border-cyan-500/20 pt-4">
+                    <h3 className="text-xl font-semibold text-white mb-2">{t('aiSupplierSuggestions')}</h3>
                     <button 
                         type="button" 
                         onClick={handleGetSuggestions}
                         disabled={isLoadingSuggestions || items.some(item => !item.name)}
-                        className="flex items-center gap-2 bg-accent-500 text-white py-2 px-4 rounded-md hover:bg-accent-600 disabled:bg-gray-400"
+                        className="flex items-center gap-2 bg-pink-glow text-white py-2 px-4 rounded-md hover:bg-pink-600 disabled:bg-slate-600 transition-all shadow-md hover:shadow-glow-pink"
                     >
                         {isLoadingSuggestions ? <Spinner /> : null}
                         {isLoadingSuggestions ? t('generatingSuggestions') : t('getSupplierSuggestions')}
                     </button>
-                    {suggestionError && <p className="text-red-500 text-sm mt-2">{suggestionError}</p>}
+                    {suggestionError && <p className="text-red-400 text-sm mt-2">{suggestionError}</p>}
 
                     {suggestions.length > 0 && (
                         <div className="mt-4 space-y-3 animate-fade-in-up">
                             {suggestions.map((suggestion, index) => (
-                                <div key={index} className="p-4 bg-blue-50 border-l-4 border-blue-400 rounded-r-lg">
-                                    <h4 className="font-bold text-blue-800">{suggestion.supplierName}</h4>
-                                    <p className="text-sm text-blue-700 mt-1">{suggestion.justification}</p>
+                                <div key={index} className="p-4 bg-cyan-950/40 border-l-4 border-cyan-400 rounded-r-lg">
+                                    <h4 className="font-bold text-cyan-200">{suggestion.supplierName}</h4>
+                                    <p className="text-sm text-cyan-300 mt-1">{suggestion.justification}</p>
                                 </div>
                             ))}
                         </div>
                     )}
                 </div>
 
-                <div className="flex justify-end gap-4 border-t pt-6">
-                    <button type="button" onClick={handleCancel} className="bg-gray-200 text-gray-800 py-2 px-6 rounded-md hover:bg-gray-300">
+                <div className="flex justify-end gap-4 border-t border-cyan-500/20 pt-6">
+                    <button type="button" onClick={handleCancel} className="bg-slate-700 text-slate-200 py-2 px-6 rounded-md hover:bg-slate-600 transition">
                         {t('cancel')}
                     </button>
-                    <button type="button" onClick={handleSaveDraft} className="bg-yellow-500 text-white py-2 px-6 rounded-md hover:bg-yellow-600">
+                    <button type="button" onClick={handleSaveDraft} className="bg-yellow-600 text-white py-2 px-6 rounded-md hover:bg-yellow-500 transition">
                         {t('saveDraft')}
                     </button>
-                    <button type="submit" className="bg-primary-600 text-white py-2 px-6 rounded-md hover:bg-primary-700">
+                    <button type="submit" className="bg-cyan-glow text-slate-950 font-semibold py-2 px-6 rounded-md hover:bg-cyan-400 transition-all shadow-md hover:shadow-glow-cyan">
                         {t('submitRequest')}
                     </button>
                 </div>

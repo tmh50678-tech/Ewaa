@@ -1,20 +1,21 @@
+
 import { RequestStatus } from './types';
 import type { RoleDefinition } from './types';
 
 export const STATUS_COLORS: { [key in RequestStatus]: string } = {
-  [RequestStatus.DRAFT]: 'bg-gray-200 text-gray-800',
-  [RequestStatus.PENDING_HM_APPROVAL]: 'bg-yellow-200 text-yellow-800',
-  [RequestStatus.PENDING_QS_APPROVAL]: 'bg-yellow-200 text-yellow-800',
-  [RequestStatus.PENDING_QM_APPROVAL]: 'bg-yellow-200 text-yellow-800',
-  [RequestStatus.PENDING_PA_APPROVAL]: 'bg-yellow-200 text-yellow-800',
-  [RequestStatus.PENDING_FA_APPROVAL]: 'bg-yellow-200 text-yellow-800',
-  [RequestStatus.PENDING_PURCHASE]: 'bg-blue-200 text-blue-800',
-  [RequestStatus.PENDING_PM_APPROVAL]: 'bg-yellow-200 text-yellow-800',
-  [RequestStatus.PENDING_INVOICE]: 'bg-blue-200 text-blue-800',
-  [RequestStatus.PENDING_AM_APPROVAL]: 'bg-yellow-200 text-yellow-800',
-  [RequestStatus.PENDING_BANK_ROUNDS]: 'bg-cyan-200 text-cyan-800',
-  [RequestStatus.COMPLETED]: 'bg-green-200 text-green-800',
-  [RequestStatus.REJECTED]: 'bg-red-200 text-red-800',
+  [RequestStatus.DRAFT]: 'bg-slate-600 text-slate-100',
+  [RequestStatus.PENDING_HM_APPROVAL]: 'bg-yellow-600/80 text-yellow-100',
+  [RequestStatus.PENDING_QS_APPROVAL]: 'bg-yellow-600/80 text-yellow-100',
+  [RequestStatus.PENDING_QM_APPROVAL]: 'bg-yellow-600/80 text-yellow-100',
+  [RequestStatus.PENDING_PA_APPROVAL]: 'bg-yellow-600/80 text-yellow-100',
+  [RequestStatus.PENDING_FA_APPROVAL]: 'bg-yellow-600/80 text-yellow-100',
+  [RequestStatus.PENDING_PURCHASE]: 'bg-blue-600/80 text-blue-100',
+  [RequestStatus.PENDING_PM_APPROVAL]: 'bg-yellow-600/80 text-yellow-100',
+  [RequestStatus.PENDING_INVOICE]: 'bg-blue-600/80 text-blue-100',
+  [RequestStatus.PENDING_AM_APPROVAL]: 'bg-yellow-600/80 text-yellow-100',
+  [RequestStatus.PENDING_BANK_ROUNDS]: 'bg-cyan-600/80 text-cyan-100',
+  [RequestStatus.COMPLETED]: 'bg-green-600/80 text-green-100',
+  [RequestStatus.REJECTED]: 'bg-red-600/80 text-red-100',
 };
 
 // FIX: Added 'as const' to ensure ROLES values are treated as literal types, not general strings.

@@ -1,3 +1,4 @@
+
 import React from 'react';
 import type { AugmentedAIAnalysisResult } from '../types';
 import { useTranslation } from '../i18n';
@@ -34,9 +35,9 @@ const AIFeedback: React.FC<AIFeedbackProps> = ({ result }) => {
 
     const FeedbackSection: React.FC<FeedbackSectionProps> = ({ title, alertType, children }) => {
         const styles = {
-            critical: { icon: 'text-red-500', text: 'text-red-800', bg: 'bg-red-50', border: 'border-red-400' },
-            warning: { icon: 'text-yellow-500', text: 'text-yellow-800', bg: 'bg-yellow-50', border: 'border-yellow-400' },
-            success: { icon: 'text-green-500', text: 'text-green-800', bg: 'bg-green-50', border: 'border-green-400' },
+            critical: { icon: 'text-red-400', text: 'text-red-300', bg: 'bg-red-900/50', border: 'border-red-500' },
+            warning: { icon: 'text-yellow-400', text: 'text-yellow-300', bg: 'bg-yellow-900/50', border: 'border-yellow-500' },
+            success: { icon: 'text-green-400', text: 'text-green-300', bg: 'bg-green-900/50', border: 'border-green-500' },
         };
         const selectedStyle = styles[alertType];
 
@@ -58,7 +59,7 @@ const AIFeedback: React.FC<AIFeedbackProps> = ({ result }) => {
 
     return (
         <div>
-            <h2 className="text-2xl font-bold mb-4 text-gray-800">{t('aiInvoiceAnalysis')}</h2>
+            <h2 className="text-2xl font-bold mb-4 text-white">{t('aiInvoiceAnalysis')}</h2>
             
             <FeedbackSection
                 title={t('duplicateCheck')}
@@ -75,7 +76,7 @@ const AIFeedback: React.FC<AIFeedbackProps> = ({ result }) => {
                  <p className="font-bold mb-2">{priceCheck.overallAssessment}</p>
                  <ul className="space-y-2 text-sm">
                      {priceCheck.priceAnalysis.map((item, index) => (
-                         <li key={index} className={`p-2 rounded ${item.isOverpriced ? 'bg-yellow-100' : 'bg-green-100'}`}>
+                         <li key={index} className={`p-2 rounded ${item.isOverpriced ? 'bg-yellow-950/50' : 'bg-green-950/50'}`}>
                              <strong>{item.itemName} ({t('currency')} {item.price.toLocaleString(language)}):</strong> {item.marketPriceComparison}
                          </li>
                      ))}
@@ -89,30 +90,30 @@ const AIFeedback: React.FC<AIFeedbackProps> = ({ result }) => {
                  <p className="font-bold mb-2">{hasHigherInternalPrice ? t('priceHigherWarning') : t('priceLowerOrSameInfo')}</p>
                  <ul className="space-y-2 text-sm">
                      {internalPriceCheck.map((item, index) => {
-                        let styling = 'bg-gray-100';
+                        let styling = 'bg-slate-800';
                         let textContent = '';
 
                         switch(item.comparison) {
                             case 'higher':
-                                styling = 'bg-yellow-100';
+                                styling = 'bg-yellow-950/50';
                                 textContent = t('internalPriceCheck.higher', { 
                                     invoicePrice: item.invoicePrice.toLocaleString(language),
                                     catalogPrice: item.catalogPrice?.toLocaleString(language) || 'N/A'
                                 });
                                 break;
                             case 'lower':
-                                styling = 'bg-green-100';
+                                styling = 'bg-green-950/50';
                                 textContent = t('internalPriceCheck.lower', { 
                                     invoicePrice: item.invoicePrice.toLocaleString(language),
                                     catalogPrice: item.catalogPrice?.toLocaleString(language) || 'N/A'
                                 });
                                 break;
                             case 'new':
-                                styling = 'bg-blue-100';
+                                styling = 'bg-blue-950/50';
                                 textContent = t('internalPriceCheck.new');
                                 break;
                             case 'same':
-                                styling = 'bg-gray-100';
+                                styling = 'bg-slate-800';
                                 textContent = t('internalPriceCheck.same');
                                 break;
                         }

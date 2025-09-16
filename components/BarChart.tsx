@@ -63,7 +63,7 @@ const BarChart: React.FC<BarChartProps> = ({ data }) => {
                                     height={barHeight}
                                     rx="4"
                                     ry="4"
-                                    className="fill-current text-primary-500 hover:text-primary-700 transition-colors cursor-pointer"
+                                    className="fill-current text-cyan-500 hover:text-cyan-400 transition-colors cursor-pointer"
                                     onMouseOver={(e) => handleMouseOver(e, item)}
                                     onMouseLeave={handleMouseLeave}
                                 />
@@ -71,7 +71,7 @@ const BarChart: React.FC<BarChartProps> = ({ data }) => {
                                     x={x + barWidth / 2}
                                     y={chartHeight - 5}
                                     textAnchor="middle"
-                                    className="text-xs fill-current text-gray-600 font-medium"
+                                    className="text-xs fill-current text-slate-400 font-medium"
                                 >
                                     {item.label}
                                 </text>
@@ -79,11 +79,11 @@ const BarChart: React.FC<BarChartProps> = ({ data }) => {
                         );
                     })}
                 </g>
-                 <line x1="0" y1={chartHeight - 20} x2={chartWidth} y2={chartHeight - 20} stroke="#e2e8f0" strokeWidth="2" />
+                 <line x1="0" y1={chartHeight - 20} x2={chartWidth} y2={chartHeight - 20} className="stroke-current text-slate-700" strokeWidth="2" />
             </svg>
             {tooltip && (
                 <div 
-                    className="absolute bg-gray-800 text-white text-sm rounded-md p-2 pointer-events-none transform -translate-x-1/2 -translate-y-full shadow-lg z-10"
+                    className="absolute bg-slate-900 text-white text-sm rounded-md p-2 pointer-events-none transform -translate-x-1/2 -translate-y-full shadow-lg z-10 border border-slate-700"
                     style={{ left: tooltip.x, top: tooltip.y }}
                 >
                     <div className="font-bold">{tooltip.label}</div>

@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import { useTranslation } from '../i18n';
 
@@ -21,7 +22,7 @@ const Toast: React.FC<ToastProps> = ({ message, onClose }) => {
 
   return (
     <div 
-      className={`fixed bottom-5 ${language === 'ar' ? 'left-5' : 'right-5'} z-50 bg-green-600 text-white py-3 px-5 rounded-lg shadow-lg flex items-center animate-fade-in-up`}
+      className={`fixed bottom-5 ${language === 'ar' ? 'left-5' : 'right-5'} z-50 bg-cyan-500/90 backdrop-blur-sm text-slate-950 font-semibold py-3 px-5 rounded-lg shadow-lg shadow-cyan-500/30 flex items-center animate-fade-in-up`}
       role="alert"
       aria-live="assertive"
     >

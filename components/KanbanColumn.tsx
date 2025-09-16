@@ -1,4 +1,5 @@
 
+
 import React from 'react';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import RequestCard from './RequestCard';
@@ -20,11 +21,11 @@ const KanbanColumn: React.FC<KanbanColumnProps> = ({ id, title, requests, onSele
   const { setNodeRef } = useDroppable({ id });
 
   return (
-    <div className="flex-shrink-0 w-80 bg-gray-200 rounded-lg shadow-sm">
-      <div className="p-3 bg-gray-300 rounded-t-lg">
-        <h2 className="font-bold text-gray-800 text-lg">
+    <div className="flex-shrink-0 w-80 bg-slate-800/50 rounded-lg shadow-lg">
+      <div className="p-3 bg-slate-900/60 rounded-t-lg sticky top-0 backdrop-blur-sm">
+        <h2 className="font-bold text-white text-lg">
           {title}
-          <span className="ml-2 rtl:mr-2 rtl:ml-0 text-sm font-normal text-gray-600 bg-gray-200 rounded-full px-2 py-0.5">
+          <span className="ml-2 rtl:mr-2 rtl:ml-0 text-sm font-normal text-slate-300 bg-slate-700 rounded-full px-2 py-0.5">
             {requests.length}
           </span>
         </h2>
@@ -41,7 +42,7 @@ const KanbanColumn: React.FC<KanbanColumnProps> = ({ id, title, requests, onSele
               />
             ))
           ) : (
-            <div className="p-4 flex items-center justify-center h-full text-center text-sm text-gray-500">{t('noRequestsFound')}</div>
+            <div className="p-4 flex items-center justify-center h-full text-center text-sm text-slate-400">{t('noRequestsFound')}</div>
           )}
         </div>
       </SortableContext>

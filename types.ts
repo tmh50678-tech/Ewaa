@@ -130,6 +130,7 @@ export interface Attachment {
 
 export interface PurchaseRequest {
     id: string;
+    referenceNumber: number;
     requester: User;
     status: RequestStatus;
     items: PurchaseRequestItem[];
@@ -178,4 +179,14 @@ export interface CatalogItem {
 export interface SupplierSuggestion {
     supplierName: string;
     justification: string;
+}
+
+export interface AISearchFilters {
+    status?: RequestStatus[];
+    branchId?: string;
+    department?: string;
+    searchTerm?: string;
+    minTotal?: number;
+    maxTotal?: number;
+    requesterId?: number;
 }

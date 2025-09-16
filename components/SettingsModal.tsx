@@ -1,4 +1,5 @@
 
+
 import React, { useState, useEffect } from 'react';
 import type { User, RoleDefinition, Branch, Role, Supplier, SalesRepresentative } from '../types';
 import { RequestStatus } from '../types';
@@ -15,11 +16,16 @@ interface SettingsModalProps {
 
 type SettingsTab = 'users' | 'roles' | 'branches' | 'suppliers';
 
+const inputStyles = "block w-full px-3 py-2 bg-slate-900/50 border border-slate-600 rounded-md placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-cyan-400 focus:border-cyan-400 sm:text-sm transition text-white";
+const smallInputStyles = "w-full px-2 py-1 bg-slate-700 border border-slate-600 rounded text-white focus:ring-cyan-500 focus:border-cyan-500 text-sm";
+const checkboxStyles = "form-checkbox h-4 w-4 rounded bg-slate-700 border-slate-500 text-cyan-500 focus:ring-cyan-500 focus:ring-offset-slate-800";
+
+
 const PasswordToggle: React.FC<{show: boolean, onToggle: () => void}> = ({show, onToggle}) => (
     <button
         type="button"
         onClick={onToggle}
-        className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+        className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-cyan-400"
         aria-label={show ? "Hide password" : "Show password"}
     >
         {show ? (
@@ -270,7 +276,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
         handleCancelEditSupplier();
     };
     
-    const handleEditSupplierChange = (field: keyof Supplier, value: string) => {
+    const handleEditSupplierChange = (field: keyof Supplier, value: any) => {
         if(editedSupplierData) {
             setEditedSupplierData({ ...editedSupplierData, [field]: value });
         }
@@ -302,67 +308,68 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
 
     const renderUserManagement = () => (
         <div>
-            <h3 className="text-xl font-semibold mb-4 text-black">{t('userManagement')}</h3>
-            <div className="max-h-64 overflow-y-auto border rounded-lg mb-4">
-                <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
+            <h3 className="text-xl font-semibold mb-4 text-slate-100">{t('userManagement')}</h3>
+            <div className="max-h-64 overflow-y-auto bg-slate-900/50 rounded-lg border border-slate-700 mb-6">
+                <table className="min-w-full divide-y divide-slate-700">
+                    <thead className="bg-slate-800/50">
                         <tr>
-                            <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('userName')}</th>
-                            <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('email')}</th>
-                            <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('password')}</th>
-                            <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('role')}</th>
-                            <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('branches')}</th>
+                            <th className="px-4 py-2 text-left text-xs font-medium text-slate-300 uppercase tracking-wider">{t('userName')}</th>
+                            <th className="px-4 py-2 text-left text-xs font-medium text-slate-300 uppercase tracking-wider">{t('email')}</th>
+                            <th className="px-4 py-2 text-left text-xs font-medium text-slate-300 uppercase tracking-wider">{t('password')}</th>
+                            <th className="px-4 py-2 text-left text-xs font-medium text-slate-300 uppercase tracking-wider">{t('role')}</th>
+                            <th className="px-4 py-2 text-left text-xs font-medium text-slate-300 uppercase tracking-wider">{t('branches')}</th>
                             <th className="px-4 py-2"></th>
                         </tr>
                     </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
+                    <tbody className="divide-y divide-slate-700">
                         {users.map(user => (
-                            <tr key={user.id}>
+                            <tr key={user.id} className="hover:bg-slate-800/40">
                             {editingUserId === user.id ? (
                                 <>
-                                    <td><input type="text" value={editedUserData?.name || ''} onChange={e => handleEditUserChange('name', e.target.value)} className="w-full px-2 py-1 border rounded" /></td>
-                                    <td><input type="email" value={editedUserData?.email || ''} onChange={e => handleEditUserChange('email', e.target.value)} className="w-full px-2 py-1 border rounded" /></td>
+                                    <td><input type="text" value={editedUserData?.name || ''} onChange={e => handleEditUserChange('name', e.target.value)} className={smallInputStyles} /></td>
+                                    <td><input type="email" value={editedUserData?.email || ''} onChange={e => handleEditUserChange('email', e.target.value)} className={smallInputStyles} /></td>
                                     <td className="relative">
-                                        <input type={showEditUserPassword ? 'text' : 'password'} value={editedUserData?.password || ''} onChange={e => handleEditUserChange('password', e.target.value)} className="w-full px-2 py-1 border rounded" />
+                                        <input type={showEditUserPassword ? 'text' : 'password'} value={editedUserData?.password || ''} onChange={e => handleEditUserChange('password', e.target.value)} className={smallInputStyles} />
                                         <PasswordToggle show={showEditUserPassword} onToggle={() => setShowEditUserPassword(!showEditUserPassword)} />
                                     </td>
                                     <td>
-                                        <select value={editedUserData?.role} onChange={e => handleEditUserChange('role', e.target.value)} className="w-full px-2 py-1 border rounded">
-                                            {roles.map(r => <option key={r.name} value={r.name}>{t(r.name)}</option>)}
+                                        <select value={editedUserData?.role} onChange={e => handleEditUserChange('role', e.target.value)} className={smallInputStyles}>
+                                            {roles.map(r => <option key={r.name} value={r.name} className="bg-slate-900">{t(r.name)}</option>)}
                                         </select>
                                     </td>
                                     <td>
-                                        <div className="flex flex-wrap gap-2">
+                                        <div className="flex flex-wrap gap-2 p-1">
                                             {branches.map(branch => (
-                                                <label key={branch.id} className="flex items-center text-xs">
+                                                <label key={branch.id} className="flex items-center space-x-1 text-xs">
                                                     <input
                                                         type="checkbox"
                                                         checked={editedUserData?.branches.includes(branch.id)}
                                                         onChange={e => handleEditUserBranchesChange(branch.id, e.target.checked)}
+                                                        className={checkboxStyles}
                                                     />
-                                                    {branch.name}
+                                                    <span className="text-slate-300">{branch.name}</span>
                                                 </label>
                                             ))}
                                         </div>
                                     </td>
                                     <td className="px-4 py-2 whitespace-nowrap text-right text-sm font-medium">
-                                        <button onClick={handleSaveEdit} className="text-green-600 hover:text-green-900 mr-2">{t('save')}</button>
-                                        <button onClick={handleCancelEdit} className="text-gray-600 hover:text-gray-900">{t('cancel')}</button>
+                                        <button onClick={handleSaveEdit} className="text-green-400 hover:text-green-300 mr-2">{t('save')}</button>
+                                        <button onClick={handleCancelEdit} className="text-slate-400 hover:text-slate-300">{t('cancel')}</button>
                                     </td>
                                 </>
                             ) : (
                                 <>
-                                    <td className="px-4 py-2 whitespace-nowrap text-sm font-medium text-gray-900">{user.name}</td>
-                                    <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">{user.email}</td>
-                                    <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">**********</td>
-                                    <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">{t(user.role)}</td>
-                                    <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">{user.branches.map(bId => branches.find(b => b.id === bId)?.name).join(', ')}</td>
-                                    <td className="px-4 py-2 whitespace-nowrap text-right text-sm font-medium">
+                                    <td className="px-4 py-2 whitespace-nowrap text-sm font-medium text-white">{user.name}</td>
+                                    <td className="px-4 py-2 whitespace-nowrap text-sm text-slate-300">{user.email}</td>
+                                    <td className="px-4 py-2 whitespace-nowrap text-sm text-slate-400">**********</td>
+                                    <td className="px-4 py-2 whitespace-nowrap text-sm text-slate-300">{t(user.role)}</td>
+                                    <td className="px-4 py-2 whitespace-nowrap text-sm text-slate-300">{user.branches.map(bId => branches.find(b => b.id === bId)?.name).join(', ')}</td>
+                                    <td className="px-4 py-2 whitespace-nowrap text-right text-sm font-medium space-x-3">
                                         {is_admin && user.id !== currentUser.id && (
-                                            <button onClick={() => onLoginAs(user)} className="text-blue-600 hover:text-blue-900 mr-2">{t('loginAs')}</button>
+                                            <button onClick={() => onLoginAs(user)} className="text-cyan-400 hover:text-cyan-300">{t('loginAs')}</button>
                                         )}
-                                        <button onClick={() => handleStartEdit(user)} className="text-primary-600 hover:text-primary-900 mr-2">{t('edit')}</button>
-                                        <button onClick={() => handleDeleteUser(user.id)} className="text-red-600 hover:text-red-900">{t('remove')}</button>
+                                        <button onClick={() => handleStartEdit(user)} className="text-yellow-400 hover:text-yellow-300">{t('edit')}</button>
+                                        <button onClick={() => handleDeleteUser(user.id)} className="text-pink-500 hover:text-pink-400">{t('remove')}</button>
                                     </td>
                                 </>
                             )}
@@ -371,24 +378,24 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
                     </tbody>
                 </table>
             </div>
-             <form onSubmit={handleAddUser} className="space-y-4 border-t pt-4">
-                <h4 className="font-semibold">{t('addUser')}</h4>
+             <form onSubmit={handleAddUser} className="space-y-4 border-t border-slate-700 pt-4">
+                <h4 className="font-semibold text-lg text-slate-200">{t('addUser')}</h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <input type="text" placeholder={t('userName')} value={newUserName} onChange={e => setNewUserName(e.target.value)} required className="w-full px-3 py-2 border rounded-md" />
-                    <input type="email" placeholder={t('email')} value={newUserEmail} onChange={e => setNewUserEmail(e.target.value)} required className="w-full px-3 py-2 border rounded-md" />
+                    <input type="text" placeholder={t('userName')} value={newUserName} onChange={e => setNewUserName(e.target.value)} required className={inputStyles} />
+                    <input type="email" placeholder={t('email')} value={newUserEmail} onChange={e => setNewUserEmail(e.target.value)} required className={inputStyles} />
                     <div className="relative">
-                        <input type={showNewUserPassword ? 'text' : 'password'} placeholder={t('password')} value={newUserPassword} onChange={e => setNewUserPassword(e.target.value)} required className="w-full px-3 py-2 border rounded-md" />
+                        <input type={showNewUserPassword ? 'text' : 'password'} placeholder={t('password')} value={newUserPassword} onChange={e => setNewUserPassword(e.target.value)} required className={inputStyles} />
                         <PasswordToggle show={showNewUserPassword} onToggle={() => setShowNewUserPassword(!showNewUserPassword)} />
                     </div>
-                    <select value={newUserRole} onChange={e => setNewUserRole(e.target.value)} required className="w-full px-3 py-2 border rounded-md">
-                        {roles.map(r => <option key={r.name} value={r.name}>{t(r.name)}</option>)}
+                    <select value={newUserRole} onChange={e => setNewUserRole(e.target.value)} required className={inputStyles}>
+                        {roles.map(r => <option key={r.name} value={r.name} className="bg-slate-900">{t(r.name)}</option>)}
                     </select>
                 </div>
                  <div>
-                    <label className="block text-sm font-bold text-gray-900 mb-1">{t('branches')}</label>
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                    <label className="block text-sm font-bold text-slate-300 mb-2">{t('branches')}</label>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3 p-3 bg-slate-900/50 rounded-md border border-slate-700">
                         {branches.map(branch => (
-                            <label key={branch.id} className="flex items-center space-x-2">
+                            <label key={branch.id} className="flex items-center space-x-2 rtl:space-x-reverse">
                                 <input
                                     type="checkbox"
                                     checked={newUserBranches.includes(branch.id)}
@@ -399,52 +406,53 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
                                             setNewUserBranches(newUserBranches.filter(id => id !== branch.id));
                                         }
                                     }}
+                                    className={checkboxStyles}
                                 />
-                                <span className="text-gray-800">{branch.name}</span>
+                                <span className="text-slate-300">{branch.name}</span>
                             </label>
                         ))}
                     </div>
                 </div>
-                <button type="submit" className="bg-primary-600 text-white py-2 px-4 rounded-md hover:bg-primary-700">{t('addUser')}</button>
+                <button type="submit" className="bg-cyan-glow text-slate-950 font-bold py-2 px-4 rounded-md hover:bg-cyan-400 transition shadow-md hover:shadow-glow-cyan">{t('addUser')}</button>
             </form>
         </div>
     );
     
     const renderRoleManagement = () => (
         <div>
-            <h3 className="text-xl font-semibold mb-4 text-black">{t('roleManagement')}</h3>
-             <div className="max-h-64 overflow-y-auto border rounded-lg mb-4">
-                 <table className="min-w-full divide-y divide-gray-200">
-                     <thead className="bg-gray-50">
+            <h3 className="text-xl font-semibold mb-4 text-slate-100">{t('roleManagement')}</h3>
+             <div className="max-h-64 overflow-y-auto bg-slate-900/50 rounded-lg border border-slate-700 mb-6">
+                 <table className="min-w-full divide-y divide-slate-700">
+                     <thead className="bg-slate-800/50">
                         <tr>
-                            <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('role')}</th>
-                            <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('permissions')}</th>
+                            <th className="px-4 py-2 text-left text-xs font-medium text-slate-300 uppercase tracking-wider">{t('role')}</th>
+                            <th className="px-4 py-2 text-left text-xs font-medium text-slate-300 uppercase tracking-wider">{t('permissions')}</th>
                             <th className="px-4 py-2"></th>
                         </tr>
                      </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
+                    <tbody className="divide-y divide-slate-700">
                         {roles.map(role => (
-                            <tr key={role.name}>
-                                <td className="px-4 py-2 whitespace-nowrap text-sm font-medium text-gray-900">{t(role.name)}</td>
-                                <td className="px-4 py-2 text-sm text-gray-500">
+                            <tr key={role.name} className="hover:bg-slate-800/40">
+                                <td className="px-4 py-2 whitespace-nowrap text-sm font-medium text-white">{t(role.name)}</td>
+                                <td className="px-4 py-2 text-sm text-slate-300">
                                     {role.permissions.length === Object.values(RequestStatus).length ? 'All' : role.permissions.map(p => t(p)).join(', ')}
                                 </td>
                                 <td className="px-4 py-2 whitespace-nowrap text-right text-sm font-medium">
-                                    <button onClick={() => handleDeleteRole(role.name)} className="text-red-600 hover:text-red-900">{t('remove')}</button>
+                                    <button onClick={() => handleDeleteRole(role.name)} className="text-pink-500 hover:text-pink-400">{t('remove')}</button>
                                 </td>
                             </tr>
                         ))}
                     </tbody>
                  </table>
              </div>
-              <form onSubmit={handleAddRole} className="space-y-4 border-t pt-4">
-                <h4 className="font-semibold">{t('addRole')}</h4>
-                <input type="text" placeholder={t('role')} value={newRoleName} onChange={e => setNewRoleName(e.target.value)} required className="w-full px-3 py-2 border rounded-md" />
+              <form onSubmit={handleAddRole} className="space-y-4 border-t border-slate-700 pt-4">
+                <h4 className="font-semibold text-lg text-slate-200">{t('addRole')}</h4>
+                <input type="text" placeholder={t('role')} value={newRoleName} onChange={e => setNewRoleName(e.target.value)} required className={inputStyles} />
                  <div>
-                    <label className="block text-sm font-bold text-gray-900 mb-1">{t('permissions')}</label>
-                     <div className="grid grid-cols-2 md:grid-cols-3 gap-2 max-h-40 overflow-y-auto p-2 border rounded-md">
+                    <label className="block text-sm font-bold text-slate-300 mb-2">{t('permissions')}</label>
+                     <div className="grid grid-cols-2 md:grid-cols-3 gap-3 max-h-40 overflow-y-auto p-3 bg-slate-900/50 rounded-md border border-slate-700">
                         {Object.values(RequestStatus).map(status => (
-                            <label key={status} className="flex items-center space-x-2">
+                            <label key={status} className="flex items-center space-x-2 rtl:space-x-reverse">
                                 <input
                                     type="checkbox"
                                     checked={newRolePermissions.includes(status)}
@@ -455,51 +463,52 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
                                             setNewRolePermissions(newRolePermissions.filter(p => p !== status));
                                         }
                                     }}
+                                    className={checkboxStyles}
                                 />
-                                <span className="text-xs text-black">{t(status)}</span>
+                                <span className="text-xs text-slate-300">{t(status)}</span>
                             </label>
                         ))}
                     </div>
                 </div>
-                <button type="submit" className="bg-primary-600 text-white py-2 px-4 rounded-md hover:bg-primary-700">{t('addRole')}</button>
+                <button type="submit" className="bg-cyan-glow text-slate-950 font-bold py-2 px-4 rounded-md hover:bg-cyan-400 transition shadow-md hover:shadow-glow-cyan">{t('addRole')}</button>
             </form>
         </div>
     );
     
     const renderBranchManagement = () => (
         <div>
-            <h3 className="text-xl font-semibold mb-4 text-black">{t('branchManagement')}</h3>
+            <h3 className="text-xl font-semibold mb-4 text-slate-100">{t('branchManagement')}</h3>
             <datalist id="saudi-cities">
                 {SAUDI_CITIES.map(city => <option key={city} value={city} />)}
             </datalist>
-             <div className="max-h-64 overflow-y-auto border rounded-lg mb-4">
-                 <table className="min-w-full divide-y divide-gray-200">
-                     <thead className="bg-gray-50">
+             <div className="max-h-64 overflow-y-auto bg-slate-900/50 rounded-lg border border-slate-700 mb-6">
+                 <table className="min-w-full divide-y divide-slate-700">
+                     <thead className="bg-slate-800/50">
                         <tr>
-                            <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('branch')}</th>
-                            <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('city')}</th>
+                            <th className="px-4 py-2 text-left text-xs font-medium text-slate-300 uppercase tracking-wider">{t('branch')}</th>
+                            <th className="px-4 py-2 text-left text-xs font-medium text-slate-300 uppercase tracking-wider">{t('city')}</th>
                             <th className="px-4 py-2"></th>
                         </tr>
                      </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
+                    <tbody className="divide-y divide-slate-700">
                         {branches.map(branch => (
-                            <tr key={branch.id}>
+                            <tr key={branch.id} className="hover:bg-slate-800/40">
                                 {editingBranchId === branch.id ? (
                                     <>
-                                        <td><input type="text" value={editedBranchData?.name || ''} onChange={e => handleEditBranchChange('name', e.target.value)} className="w-full px-2 py-1 border rounded" /></td>
-                                        <td><input type="text" value={editedBranchData?.city || ''} onChange={e => handleEditBranchChange('city', e.target.value)} className="w-full px-2 py-1 border rounded" list="saudi-cities" /></td>
+                                        <td><input type="text" value={editedBranchData?.name || ''} onChange={e => handleEditBranchChange('name', e.target.value)} className={smallInputStyles} /></td>
+                                        <td><input type="text" value={editedBranchData?.city || ''} onChange={e => handleEditBranchChange('city', e.target.value)} className={smallInputStyles} list="saudi-cities" /></td>
                                         <td className="px-4 py-2 whitespace-nowrap text-right text-sm font-medium">
-                                            <button onClick={handleSaveEditBranch} className="text-green-600 hover:text-green-900 mr-2">{t('save')}</button>
-                                            <button onClick={handleCancelEditBranch} className="text-gray-600 hover:text-gray-900">{t('cancel')}</button>
+                                            <button onClick={handleSaveEditBranch} className="text-green-400 hover:text-green-300 mr-2">{t('save')}</button>
+                                            <button onClick={handleCancelEditBranch} className="text-slate-400 hover:text-slate-300">{t('cancel')}</button>
                                         </td>
                                     </>
                                 ) : (
                                     <>
-                                        <td className="px-4 py-2 whitespace-nowrap text-sm font-medium text-gray-900">{branch.name}</td>
-                                        <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">{branch.city}</td>
-                                        <td className="px-4 py-2 whitespace-nowrap text-right text-sm font-medium">
-                                            <button onClick={() => handleStartEditBranch(branch)} className="text-primary-600 hover:text-primary-900 mr-2">{t('edit')}</button>
-                                            <button onClick={() => handleDeleteBranch(branch.id)} className="text-red-600 hover:text-red-900">{t('remove')}</button>
+                                        <td className="px-4 py-2 whitespace-nowrap text-sm font-medium text-white">{branch.name}</td>
+                                        <td className="px-4 py-2 whitespace-nowrap text-sm text-slate-300">{branch.city}</td>
+                                        <td className="px-4 py-2 whitespace-nowrap text-right text-sm font-medium space-x-3">
+                                            <button onClick={() => handleStartEditBranch(branch)} className="text-yellow-400 hover:text-yellow-300">{t('edit')}</button>
+                                            <button onClick={() => handleDeleteBranch(branch.id)} className="text-pink-500 hover:text-pink-400">{t('remove')}</button>
                                         </td>
                                     </>
                                 )}
@@ -508,12 +517,12 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
                     </tbody>
                  </table>
              </div>
-             <form onSubmit={handleAddBranch} className="space-y-4 border-t pt-4">
-                <h4 className="font-semibold">{t('addBranch')}</h4>
-                <div className="flex gap-2">
-                    <input type="text" placeholder={t('branch')} value={newBranchName} onChange={e => setNewBranchName(e.target.value)} required className="w-full px-3 py-2 border rounded-md" />
-                    <input type="text" placeholder={t('city')} value={newBranchCity} onChange={e => setNewBranchCity(e.target.value)} required className="w-full px-3 py-2 border rounded-md" list="saudi-cities" />
-                    <button type="submit" className="bg-primary-600 text-white py-2 px-4 rounded-md hover:bg-primary-700">{t('addBranch')}</button>
+             <form onSubmit={handleAddBranch} className="space-y-4 border-t border-slate-700 pt-4">
+                <h4 className="font-semibold text-lg text-slate-200">{t('addBranch')}</h4>
+                <div className="flex gap-4">
+                    <input type="text" placeholder={t('branch')} value={newBranchName} onChange={e => setNewBranchName(e.target.value)} required className={inputStyles} />
+                    <input type="text" placeholder={t('city')} value={newBranchCity} onChange={e => setNewBranchCity(e.target.value)} required className={inputStyles} list="saudi-cities" />
+                    <button type="submit" className="bg-cyan-glow text-slate-950 font-bold py-2 px-4 rounded-md hover:bg-cyan-400 transition shadow-md hover:shadow-glow-cyan whitespace-nowrap">{t('addBranch')}</button>
                 </div>
             </form>
         </div>
@@ -521,78 +530,78 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
 
      const renderSupplierManagement = () => (
         <div>
-            <h3 className="text-xl font-semibold mb-4">{t('supplierManagement')}</h3>
-            <div className="space-y-4 max-h-96 overflow-y-auto">
+            <h3 className="text-xl font-semibold mb-4 text-slate-100">{t('supplierManagement')}</h3>
+            <div className="space-y-4 max-h-[32rem] overflow-y-auto pr-2">
                 {suppliers.map(supplier => (
-                    <div key={supplier.name} className="p-4 border rounded-lg bg-gray-50">
+                    <div key={supplier.name} className="p-4 glass-panel rounded-lg">
                         {editingSupplierName === supplier.name && editedSupplierData ? (
                             <div className="space-y-3">
                                 <div>
-                                    <label className="text-xs font-bold text-gray-600">{t('supplierName')}</label>
-                                    <input type="text" value={editedSupplierData.name} onChange={e => handleEditSupplierChange('name', e.target.value)} className="w-full text-sm px-2 py-1 border rounded" />
+                                    <label className="text-xs font-bold text-slate-300">{t('supplierName')}</label>
+                                    <input type="text" value={editedSupplierData.name} onChange={e => handleEditSupplierChange('name', e.target.value)} className={inputStyles} />
                                 </div>
                                 <div>
-                                    <label className="text-xs font-bold text-gray-600">{t('category')}</label>
-                                    <input type="text" value={editedSupplierData.category} onChange={e => handleEditSupplierChange('category', e.target.value)} className="w-full text-sm px-2 py-1 border rounded" />
+                                    <label className="text-xs font-bold text-slate-300">{t('category')}</label>
+                                    <input type="text" value={editedSupplierData.category} onChange={e => handleEditSupplierChange('category', e.target.value)} className={inputStyles} />
                                 </div>
                                 <div>
-                                    <label className="text-xs font-bold text-gray-600">{t('contact')}</label>
-                                    <input type="text" value={editedSupplierData.contact} onChange={e => handleEditSupplierChange('contact', e.target.value)} className="w-full text-sm px-2 py-1 border rounded" />
+                                    <label className="text-xs font-bold text-slate-300">{t('contact')}</label>
+                                    <input type="text" value={editedSupplierData.contact} onChange={e => handleEditSupplierChange('contact', e.target.value)} className={inputStyles} />
                                 </div>
                                 <div>
-                                    <label className="text-xs font-bold text-gray-600">{t('website')}</label>
-                                    <input type="text" placeholder="e.g., example.com" value={editedSupplierData.website || ''} onChange={e => handleEditSupplierChange('website', e.target.value)} className="w-full text-sm px-2 py-1 border rounded" />
+                                    <label className="text-xs font-bold text-slate-300">{t('website')}</label>
+                                    <input type="text" placeholder="e.g., example.com" value={editedSupplierData.website || ''} onChange={e => handleEditSupplierChange('website', e.target.value)} className={inputStyles} />
                                 </div>
                                 <div>
-                                    <label className="text-xs font-bold text-gray-600">{t('notes')}</label>
-                                    <textarea value={editedSupplierData.notes || ''} onChange={e => handleEditSupplierChange('notes', e.target.value)} className="w-full text-sm px-2 py-1 border rounded" rows={2}></textarea>
+                                    <label className="text-xs font-bold text-slate-300">{t('notes')}</label>
+                                    <textarea value={editedSupplierData.notes || ''} onChange={e => handleEditSupplierChange('notes', e.target.value)} className={inputStyles} rows={2}></textarea>
                                 </div>
                                 <div className="flex gap-2">
-                                    <button onClick={handleSaveEditSupplier} className="text-sm bg-green-500 text-white py-1 px-3 rounded hover:bg-green-600">{t('save')}</button>
-                                    <button onClick={handleCancelEditSupplier} className="text-sm bg-gray-200 py-1 px-3 rounded hover:bg-gray-300">{t('cancel')}</button>
+                                    <button onClick={handleSaveEditSupplier} className="text-sm bg-green-600 text-white py-1 px-3 rounded hover:bg-green-500">{t('save')}</button>
+                                    <button onClick={handleCancelEditSupplier} className="text-sm bg-slate-600 py-1 px-3 rounded hover:bg-slate-500">{t('cancel')}</button>
                                 </div>
                             </div>
                         ) : (
                             <>
                                 <div className="flex justify-between items-start">
                                     <div>
-                                        <h4 className="font-bold text-lg text-gray-800">{supplier.name}</h4>
-                                        <p className="text-sm text-gray-600">{supplier.category} - {supplier.contact}</p>
-                                        {supplier.website && <a href={supplier.website.startsWith('http') ? supplier.website : `//${supplier.website}`} target="_blank" rel="noopener noreferrer" className="text-xs text-primary-600 hover:underline">{supplier.website}</a>}
+                                        <h4 className="font-bold text-lg text-white">{supplier.name}</h4>
+                                        <p className="text-sm text-slate-300">{supplier.category} - {supplier.contact}</p>
+                                        {supplier.website && <a href={supplier.website.startsWith('http') ? supplier.website : `//${supplier.website}`} target="_blank" rel="noopener noreferrer" className="text-xs text-cyan-400 hover:underline">{supplier.website}</a>}
                                     </div>
-                                    <button onClick={() => handleStartEditSupplier(supplier)} className="text-sm text-primary-600 hover:text-primary-800 font-semibold">{t('edit')}</button>
+                                    <button onClick={() => handleStartEditSupplier(supplier)} className="text-sm text-yellow-400 hover:text-yellow-300 font-semibold">{t('edit')}</button>
                                 </div>
                                 
-                                {supplier.notes && <p className="text-xs text-gray-500 italic mt-1 p-2 bg-white rounded">"{supplier.notes}"</p>}
+                                {supplier.notes && <p className="text-xs text-slate-400 italic mt-2 p-2 bg-slate-900/50 rounded">"{supplier.notes}"</p>}
 
                                 <div className="mt-3">
-                                    <h5 className="font-semibold text-sm mb-2">{t('salesRepresentatives')}</h5>
+                                    <h5 className="font-semibold text-sm mb-2 text-slate-200">{t('salesRepresentatives')}</h5>
                                     {supplier.representatives.length > 0 ? (
-                                        <ul className="space-y-1 text-sm list-disc list-inside">
+                                        <ul className="space-y-1 text-sm list-disc list-inside text-slate-300">
                                             {supplier.representatives.map(rep => (
                                                 <li key={rep.name}>
-                                                    <span className="font-medium">{rep.name}</span> - <span className="text-gray-600">{rep.contact}</span>
+                                                    <span className="font-medium text-white">{rep.name}</span> - <span className="text-slate-400">{rep.contact}</span>
                                                 </li>
                                             ))}
                                         </ul>
                                     ) : (
-                                        <p className="text-xs text-gray-500 italic">No representatives added yet.</p>
+                                        <p className="text-xs text-slate-500 italic">{t('noRequestsFound')}</p>
                                     )}
                                 </div>
 
                                 {addingRepToSupplier !== supplier.name && (
-                                    <button onClick={() => setAddingRepToSupplier(supplier.name)} className="text-sm mt-3 bg-primary-100 text-primary-700 py-1 px-3 rounded hover:bg-primary-200">
+                                    <button onClick={() => setAddingRepToSupplier(supplier.name)} className="text-sm mt-3 bg-cyan-900/50 text-cyan-300 py-1 px-3 rounded-md hover:bg-cyan-800/50 border border-cyan-800 transition-colors">
                                         {t('addRepresentative')}
                                     </button>
                                 )}
                             
                                 {addingRepToSupplier === supplier.name && (
-                                    <form onSubmit={(e) => handleAddRepresentative(e, supplier.name)} className="mt-3 p-3 bg-white border rounded-md space-y-2">
-                                        <input type="text" placeholder={t('repName')} value={newRepName} onChange={e => setNewRepName(e.target.value)} required className="w-full text-sm px-2 py-1 border rounded" />
-                                        <input type="text" placeholder={t('repContact')} value={newRepContact} onChange={e => setNewRepContact(e.target.value)} required className="w-full text-sm px-2 py-1 border rounded" />
+                                    <form onSubmit={(e) => handleAddRepresentative(e, supplier.name)} className="mt-3 p-3 bg-slate-900/50 border border-slate-700 rounded-md space-y-2">
+                                        <input type="text" placeholder={t('repName')} value={newRepName} onChange={e => setNewRepName(e.target.value)} required className={inputStyles} />
+                                        <input type="text" placeholder={t('repContact')} value={newRepContact} onChange={e => setNewRepContact(e.target.value)} required className={inputStyles} />
                                         <div className="flex gap-2">
-                                            <button type="submit" className="text-sm bg-green-500 text-white py-1 px-3 rounded hover:bg-green-600">{t('add')}</button>
-                                            <button type="button" onClick={() => setAddingRepToSupplier(null)} className="text-sm bg-gray-200 py-1 px-3 rounded hover:bg-gray-300">{t('cancel')}</button>
+                                            <button type="submit" className="text-sm bg-green-600 text-white py-1 px-3 rounded hover:bg-green-500">{t('add')}</button>
+                                            <button type="button" onClick={() => setAddingRepToSupplier(null)} className="text-sm bg-slate-600 py-1 px-3 rounded hover:bg-slate-500">{t('cancel')}</button>
                                         </div>
                                     </form>
                                 )}
@@ -606,18 +615,18 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
     
     return (
         <Modal isOpen={isOpen} onClose={onClose} size="5xl">
-            <div className="p-2">
-                <h2 className="text-2xl font-bold mb-4 text-gray-800">{t('settings')}</h2>
+            <div className="text-slate-200">
+                <h2 className="text-3xl font-bold mb-6 text-white" style={{ textShadow: '0 0 8px rgba(0, 245, 212, 0.7)' }}>{t('settings')}</h2>
                 
-                <div className="border-b mb-4">
-                    <nav className="flex space-x-4">
-                        {is_admin && <button onClick={() => setActiveTab('users')} className={`py-2 px-4 font-medium ${activeTab === 'users' ? 'border-b-2 border-primary-500 text-primary-600' : 'text-gray-500 hover:text-gray-700'}`}>{t('userManagement')}</button>}
-                        {is_admin && <button onClick={() => setActiveTab('roles')} className={`py-2 px-4 font-medium ${activeTab === 'roles' ? 'border-b-2 border-primary-500 text-primary-600' : 'text-gray-500 hover:text-gray-700'}`}>{t('roleManagement')}</button>}
-                        {is_admin && <button onClick={() => setActiveTab('branches')} className={`py-2 px-4 font-medium ${activeTab === 'branches' ? 'border-b-2 border-primary-500 text-primary-600' : 'text-gray-500 hover:text-gray-700'}`}>{t('branchManagement')}</button>}
-                        {canManageSuppliers && <button onClick={() => setActiveTab('suppliers')} className={`py-2 px-4 font-medium ${activeTab === 'suppliers' ? 'border-b-2 border-primary-500 text-primary-600' : 'text-gray-500 hover:text-gray-700'}`}>{t('supplierManagement')}</button>}
+                <div className="border-b border-cyan-500/20">
+                    <nav className="-mb-px flex space-x-6 rtl:space-x-reverse" aria-label="Tabs">
+                        {is_admin && <button onClick={() => setActiveTab('users')} className={`whitespace-nowrap py-3 px-1 border-b-2 font-semibold text-base transition-colors ${activeTab === 'users' ? 'border-cyan-400 text-cyan-400' : 'border-transparent text-slate-400 hover:text-white'}`}>{t('userManagement')}</button>}
+                        {is_admin && <button onClick={() => setActiveTab('roles')} className={`whitespace-nowrap py-3 px-1 border-b-2 font-semibold text-base transition-colors ${activeTab === 'roles' ? 'border-cyan-400 text-cyan-400' : 'border-transparent text-slate-400 hover:text-white'}`}>{t('roleManagement')}</button>}
+                        {is_admin && <button onClick={() => setActiveTab('branches')} className={`whitespace-nowrap py-3 px-1 border-b-2 font-semibold text-base transition-colors ${activeTab === 'branches' ? 'border-cyan-400 text-cyan-400' : 'border-transparent text-slate-400 hover:text-white'}`}>{t('branchManagement')}</button>}
+                        {canManageSuppliers && <button onClick={() => setActiveTab('suppliers')} className={`whitespace-nowrap py-3 px-1 border-b-2 font-semibold text-base transition-colors ${activeTab === 'suppliers' ? 'border-cyan-400 text-cyan-400' : 'border-transparent text-slate-400 hover:text-white'}`}>{t('supplierManagement')}</button>}
                     </nav>
                 </div>
-                <div>
+                <div className="mt-6">
                     {activeTab === 'users' && is_admin && renderUserManagement()}
                     {activeTab === 'roles' && is_admin && renderRoleManagement()}
                     {activeTab === 'branches' && is_admin && renderBranchManagement()}

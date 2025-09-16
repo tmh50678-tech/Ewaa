@@ -1,6 +1,7 @@
 
 
 
+
 import React, { useState, useRef, useEffect } from 'react';
 import type { PurchaseRequest, PurchaseRequestItem, SupplierSuggestion } from '../types';
 import { RequestStatus } from '../types';
@@ -12,6 +13,7 @@ import { useAppContext } from '../App';
 
 interface PurchaseRequestFormProps {
     onClose: () => void;
+    requestToEdit?: PurchaseRequest | null;
 }
 
 const DRAFT_STORAGE_KEY = 'purchaseRequestDraft';
@@ -32,17 +34,20 @@ const fuzzyMatch = (pattern: string, text: string): boolean => {
 };
 
 
-const PurchaseRequestForm: React.FC<PurchaseRequestFormProps> = ({ onClose }) => {
+const PurchaseRequestForm: React.FC<PurchaseRequestFormProps> = ({ onClose, requestToEdit }) => {
     const { t } = useTranslation();
     const { 
         currentUser, 
-        addRequest: onAddRequest, 
+        addRequest, 
+        updateRequest,
         branches, 
-        showToast: onShowToast, 
+        showToast, 
         itemCatalog, 
         suppliers,
         purchaseRequests,
     } = useAppContext();
+
+    const isEditing = !!requestToEdit;
 
     // FIX: Corrected the type of the 'items' state to be an array of items (Omit<PurchaseRequestItem, 'id'>[]),
     // which resolves numerous type errors throughout the component where array methods like .map, .filter, and .reduce were used.
@@ -73,21 +78,34 @@ const PurchaseRequestForm: React.FC<PurchaseRequestFormProps> = ({ onClose }) =>
     }, []);
 
     useEffect(() => {
-        try {
-            const savedDraft = localStorage.getItem(DRAFT_STORAGE_KEY);
-            if (savedDraft) {
-                const draftData = JSON.parse(savedDraft);
-                if (draftData.items && draftData.branchId && draftData.department) {
-                    setItems(draftData.items);
-                    setBranchId(draftData.branchId);
-                    setDepartment(draftData.department);
+        if (isEditing) {
+            setItems(requestToEdit.items.map(item => ({
+                name: item.name,
+                quantity: item.quantity,
+                unit: item.unit,
+                estimatedCost: item.estimatedCost,
+                category: item.category,
+                justification: item.justification,
+            })));
+            setBranchId(requestToEdit.branch.id);
+            setDepartment(requestToEdit.department);
+        } else {
+            try {
+                const savedDraft = localStorage.getItem(DRAFT_STORAGE_KEY);
+                if (savedDraft) {
+                    const draftData = JSON.parse(savedDraft);
+                    if (draftData.items && draftData.branchId && draftData.department) {
+                        setItems(draftData.items);
+                        setBranchId(draftData.branchId);
+                        setDepartment(draftData.department);
+                    }
                 }
+            } catch (error) {
+                console.error("Failed to load draft:", error);
+                localStorage.removeItem(DRAFT_STORAGE_KEY);
             }
-        } catch (error) {
-            console.error("Failed to load draft:", error);
-            localStorage.removeItem(DRAFT_STORAGE_KEY);
         }
-    }, []);
+    }, [requestToEdit, isEditing]);
 
     const handleItemChange = (index: number, field: keyof Omit<PurchaseRequestItem, 'id'>, value: string | number) => {
         const newItems = [...items];
@@ -137,35 +155,59 @@ const PurchaseRequestForm: React.FC<PurchaseRequestFormProps> = ({ onClose }) =>
             id: `item-${Date.now()}-${index}`,
         }));
 
-        const maxRefNum = purchaseRequests.reduce((max, req) => req.referenceNumber > max ? req.referenceNumber : max, 1000);
-        const newReferenceNumber = maxRefNum + 1;
+        if (isEditing) {
+             const updatedRequest: PurchaseRequest = {
+                ...requestToEdit,
+                requester: currentUser, // In case admin edits, it becomes theirs
+                status: department === 'Projects' ? RequestStatus.PENDING_QS_APPROVAL : RequestStatus.PENDING_HM_APPROVAL,
+                items: finalItems,
+                totalEstimatedCost,
+                department,
+                branch: selectedBranch,
+                approvalHistory: [...requestToEdit.approvalHistory, { user: currentUser, action: 'Resubmitted', timestamp: new Date() }],
+             };
+             updateRequest(updatedRequest);
+        } else {
+            const maxRefNum = purchaseRequests.reduce((max, req) => req.referenceNumber > max ? req.referenceNumber : max, 1000);
+            const newReferenceNumber = maxRefNum + 1;
 
-        const newRequest: PurchaseRequest = {
-            id: `pr-${Date.now()}`,
-            referenceNumber: newReferenceNumber,
-            requester: currentUser,
-            status: department === 'Projects' ? RequestStatus.PENDING_QS_APPROVAL : RequestStatus.PENDING_HM_APPROVAL,
-            items: finalItems,
-            totalEstimatedCost,
-            createdAt: new Date().toISOString(),
-            approvalHistory: [{ user: currentUser, action: 'Submitted', timestamp: new Date() }],
-            department,
-            branch: selectedBranch,
-        };
-        onAddRequest(newRequest);
-        localStorage.removeItem(DRAFT_STORAGE_KEY);
+            const newRequest: PurchaseRequest = {
+                id: `pr-${Date.now()}`,
+                referenceNumber: newReferenceNumber,
+                requester: currentUser,
+                status: department === 'Projects' ? RequestStatus.PENDING_QS_APPROVAL : RequestStatus.PENDING_HM_APPROVAL,
+                items: finalItems,
+                totalEstimatedCost,
+                createdAt: new Date().toISOString(),
+                approvalHistory: [{ user: currentUser, action: 'Submitted', timestamp: new Date() }],
+                department,
+                branch: selectedBranch,
+            };
+            addRequest(newRequest);
+            localStorage.removeItem(DRAFT_STORAGE_KEY);
+        }
+
         onClose();
     };
 
     const handleSaveDraft = () => {
-        const draftData = { items, branchId, department };
-        localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(draftData));
-        onShowToast(t('toast.draftSaved'));
+        if(isEditing) {
+            // "Save Draft" in edit mode should just save changes without submitting.
+            const updatedRequest = { ...requestToEdit, items: items.map((item, index) => ({...item, id: requestToEdit.items[index]?.id || `item-${Date.now()}-${index}`})), branch: branches.find(b => b.id === branchId)!, department };
+            updateRequest(updatedRequest);
+            showToast(t('toast.draftSaved'));
+        } else {
+            const draftData = { items, branchId, department };
+            localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(draftData));
+            showToast(t('toast.draftSaved'));
+        }
         onClose();
     };
 
     const handleCancel = () => {
-        localStorage.removeItem(DRAFT_STORAGE_KEY);
+        if (!isEditing) {
+            localStorage.removeItem(DRAFT_STORAGE_KEY);
+        }
         onClose();
     };
 
@@ -192,7 +234,9 @@ const PurchaseRequestForm: React.FC<PurchaseRequestFormProps> = ({ onClose }) =>
     return (
         <div className="h-full">
             <div className="flex justify-between items-center mb-6 sticky top-0 py-2 border-b border-cyan-500/20">
-                <h2 className="text-2xl font-bold text-white flex-grow text-center md:text-left">{t('createNewRequest')}</h2>
+                <h2 className="text-2xl font-bold text-white flex-grow text-center md:text-left">
+                    {isEditing ? t('editRequest') : t('createNewRequest')}
+                </h2>
             </div>
             <form onSubmit={handleSubmit} className="space-y-6">
                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -339,7 +383,7 @@ const PurchaseRequestForm: React.FC<PurchaseRequestFormProps> = ({ onClose }) =>
                         {t('saveDraft')}
                     </button>
                     <button type="submit" className="bg-cyan-glow text-slate-950 font-semibold py-2 px-6 rounded-md hover:bg-cyan-400 transition-all shadow-md hover:shadow-glow-cyan">
-                        {t('submitRequest')}
+                        {isEditing ? t('resubmitRequest') : t('submitRequest')}
                     </button>
                 </div>
             </form>

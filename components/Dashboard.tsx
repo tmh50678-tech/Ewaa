@@ -1,9 +1,10 @@
 
 
 
+
 import React, { useState, useMemo, lazy, Suspense, useEffect } from 'react';
 import FocusTrap from 'focus-trap-react';
-import type { PurchaseRequest, User, AISearchFilters } from '../types';
+import type { PurchaseRequest, User, AISearchFilters, AIInsight } from '../types';
 import { RequestStatus } from '../types';
 import { ROLES } from '../constants';
 import { useTranslation } from '../i18n';
@@ -16,12 +17,15 @@ import Modal from './Modal';
 import LoadingFallback from './LoadingFallback';
 import { useAppContext } from '../App';
 import DashboardAnalytics from './DashboardAnalytics';
+import { getAIInsights } from '../services/geminiService';
 
 // Lazy load modals and views for better performance
 const SettingsModal = lazy(() => import('./SettingsModal'));
 const ReportsModal = lazy(() => import('./ReportsModal'));
 const RequestList = lazy(() => import('./RequestList'));
 const AIChatModal = lazy(() => import('./AIChatModal'));
+const AIInsights = lazy(() => import('./AIInsights'));
+
 
 const Dashboard: React.FC = () => {
     const { t, language } = useTranslation();
@@ -35,18 +39,51 @@ const Dashboard: React.FC = () => {
     } = useAppContext();
     
     const [selectedRequestId, setSelectedRequestId] = useState<string | null>(null);
-    const [isNewRequestOpen, setIsNewRequestOpen] = useState(false);
+    const [isRequestFormOpen, setIsRequestFormOpen] = useState(false);
+    const [requestToEdit, setRequestToEdit] = useState<PurchaseRequest | null>(null);
     const [isReportsOpen, setIsReportsOpen] = useState(false);
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
     const [isAIChatOpen, setIsAIChatOpen] = useState(false);
     const [viewMode, setViewMode] = useState<'kanban' | 'list'>('kanban');
     const [isLgScreen, setIsLgScreen] = useState(window.innerWidth >= 1024);
+    
+    // AI Insights State
+    const [insights, setInsights] = useState<AIInsight[]>([]);
+    const [isInsightsLoading, setIsInsightsLoading] = useState(true);
+    const [insightsError, setInsightsError] = useState<string | null>(null);
 
     useEffect(() => {
         const handleResize = () => setIsLgScreen(window.innerWidth >= 1024);
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
     }, []);
+
+    useEffect(() => {
+        const fetchInsights = async () => {
+            // Use a session storage flag to prevent re-fetching insights on every navigation
+            if (sessionStorage.getItem('ai-insights-fetched')) {
+                setIsInsightsLoading(false);
+                return;
+            }
+            // To avoid overloading, only fetch for a subset of recent requests
+            const recentRequests = requests.slice(0, 20);
+            if (recentRequests.length < 5) { // Don't fetch if there's not enough data
+                setIsInsightsLoading(false);
+                return;
+            }
+            try {
+              const result = await getAIInsights(recentRequests);
+              setInsights(result);
+              sessionStorage.setItem('ai-insights-fetched', 'true');
+            } catch (error) {
+              console.error("Failed to fetch AI insights:", error);
+              setInsightsError(t('insights.error'));
+            } finally {
+              setIsInsightsLoading(false);
+            }
+        };
+        fetchInsights();
+    }, []); // Run only once on component mount
     
     // Filtering logic
     const [searchTerm, setSearchTerm] = useState('');
@@ -121,6 +158,21 @@ const Dashboard: React.FC = () => {
         setIsAIChatOpen(false); // Close modal after applying
     };
 
+    const handleOpenNewRequestForm = () => {
+        setRequestToEdit(null);
+        setIsRequestFormOpen(true);
+    };
+
+    const handleOpenEditRequestForm = (request: PurchaseRequest) => {
+        setRequestToEdit(request);
+        setIsRequestFormOpen(true);
+    };
+
+    const handleCloseRequestForm = () => {
+        setIsRequestFormOpen(false);
+        setRequestToEdit(null); // Ensure this is always reset
+    };
+
     const analyticsData = useMemo(() => {
         const isActionable = (request: PurchaseRequest, user: User): boolean => {
             const status = request.status;
@@ -186,7 +238,7 @@ const Dashboard: React.FC = () => {
     return (
         <div className="flex flex-col h-screen">
             <Header
-                onNewRequest={() => setIsNewRequestOpen(true)}
+                onNewRequest={handleOpenNewRequestForm}
                 onToggleSettings={() => setIsSettingsOpen(true)}
                 onToggleReports={() => setIsReportsOpen(true)}
                 onToggleAIChat={() => setIsAIChatOpen(true)}
@@ -215,7 +267,18 @@ const Dashboard: React.FC = () => {
                         onViewChange={setViewMode}
                     />
                     <DashboardAnalytics data={analyticsData} />
-                    <div className="flex-grow overflow-hidden mt-4">
+                    
+                    <div className="my-4">
+                        <Suspense fallback={<div className="h-24" />}>
+                           <AIInsights
+                                insights={insights}
+                                isLoading={isInsightsLoading}
+                                error={insightsError}
+                           />
+                        </Suspense>
+                    </div>
+
+                    <div className="flex-grow overflow-hidden">
                        <Suspense fallback={<LoadingFallback />}>
                             {viewMode === 'kanban' ? (
                                 <KanbanBoard requests={filteredRequests} onSelectRequest={setSelectedRequestId} selectedRequestId={selectedRequestId} />
@@ -231,6 +294,7 @@ const Dashboard: React.FC = () => {
                            <RequestDetails
                                 request={selectedRequest}
                                 onClose={() => setSelectedRequestId(null)}
+                                onEdit={handleOpenEditRequestForm}
                            />
                         </div>
                     </FocusTrap>
@@ -248,13 +312,14 @@ const Dashboard: React.FC = () => {
 
             {selectedRequest && !isLgScreen && (
                 <Modal isOpen={!!selectedRequest} onClose={() => setSelectedRequestId(null)} size="5xl">
-                    <RequestDetails request={selectedRequest} onClose={() => setSelectedRequestId(null)} />
+                    <RequestDetails request={selectedRequest} onClose={() => setSelectedRequestId(null)} onEdit={handleOpenEditRequestForm} />
                 </Modal>
             )}
 
-            <Modal isOpen={isNewRequestOpen} onClose={() => setIsNewRequestOpen(false)} size="3xl">
+            <Modal isOpen={isRequestFormOpen} onClose={handleCloseRequestForm} size="3xl">
                 <PurchaseRequestForm
-                    onClose={() => setIsNewRequestOpen(false)}
+                    onClose={handleCloseRequestForm}
+                    requestToEdit={requestToEdit}
                 />
             </Modal>
             

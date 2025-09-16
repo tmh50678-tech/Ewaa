@@ -190,3 +190,9 @@ export interface AISearchFilters {
     maxTotal?: number;
     requesterId?: number;
 }
+
+export interface AIInsight {
+  type: 'cost' | 'efficiency' | 'trend';
+  title: string;
+  description: string;
+}

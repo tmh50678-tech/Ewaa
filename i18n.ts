@@ -49,6 +49,10 @@ const translations: Record<Language, Record<string, string>> = {
     loginAs: 'Login As',
     returnToAdmin: 'Return to Admin Account',
     impersonationBanner: 'Logged in as {userName}. ',
+    editRequest: 'Edit Request',
+    resubmitRequest: 'Resubmit Request',
+    returnForModification: 'Return for Modification',
+    modificationReasonPrompt: 'Please provide the required modifications:',
     // Statuses
     'draft': 'Draft',
     'pending_hm_approval': 'Pending Hotel Manager',
@@ -94,6 +98,10 @@ const translations: Record<Language, Record<string, string>> = {
     // Actions
     'submitted': 'submitted the request',
     'approved': 'approved the request',
+    // FIX: Renamed 'rejected' to 'action.rejected' to avoid conflict with the 'rejected' status key.
+    'action.rejected': 'rejected the request',
+    'resubmitted': 'resubmitted the request',
+    'returnedForModification': 'returned for modification',
     'markedAsPurchased': 'Marked as Purchased',
     'processedInvoice': 'processed the invoice',
     'bankRoundCompleted': 'completed the bank round',
@@ -204,6 +212,13 @@ const translations: Record<Language, Record<string, string>> = {
     'askMeAnything': 'Ask me anything about your requests...',
     'aiSearchPlaceholder': 'e.g., "Show me pending requests in Riyadh"',
     'aiGreeting': 'Hello! I am your procurement assistant. How can I help you find a request today?',
+    // AI Insights
+    'aiInsightsTitle': 'AI-Powered Insights',
+    'generatingInsights': 'Generating insights...',
+    'insights.cost': 'Cost Saving Opportunity',
+    'insights.efficiency': 'Efficiency Tip',
+    'insights.trend': 'New Trend Detected',
+    'insights.error': 'Could not generate insights at this time.',
     // Errors
     'loginError': 'Invalid email or password. Please try again.',
     'error.selectInvoice': 'Please select an invoice file to analyze.',
@@ -257,6 +272,10 @@ const translations: Record<Language, Record<string, string>> = {
     loginAs: 'الدخول كـ',
     returnToAdmin: 'العودة إلى حساب المدير',
     impersonationBanner: 'تم تسجيل الدخول باسم {userName}. ',
+    editRequest: 'تعديل الطلب',
+    resubmitRequest: 'إعادة إرسال الطلب',
+    returnForModification: 'إعادة للتعديل',
+    modificationReasonPrompt: 'يرجى ذكر التعديلات المطلوبة:',
     // Statuses
     'draft': 'مسودة',
     'pending_hm_approval': 'بانتظار موافقة مدير الفندق',
@@ -302,6 +321,10 @@ const translations: Record<Language, Record<string, string>> = {
     // Actions
     'submitted': 'قدم الطلب',
     'approved': 'وافق على الطلب',
+    // FIX: Renamed 'rejected' to 'action.rejected' to avoid conflict with the 'rejected' status key.
+    'action.rejected': 'رفض الطلب',
+    'resubmitted': 'أعاد إرسال الطلب',
+    'returnedForModification': 'أعاد الطلب للتعديل',
     'markedAsPurchased': 'تم تأكيد الشراء',
     'processedInvoice': 'عالج الفاتورة',
     'bankRoundCompleted': 'أكمل جولة البنك',
@@ -412,6 +435,13 @@ const translations: Record<Language, Record<string, string>> = {
     'askMeAnything': 'اسألني أي شيء عن طلباتك...',
     'aiSearchPlaceholder': 'مثال: "أظهر لي الطلبات المعلقة في الرياض"',
     'aiGreeting': 'مرحباً! أنا مساعد المشتريات الخاص بك. كيف يمكنني مساعدتك في العثور على طلب اليوم؟',
+    // AI Insights
+    'aiInsightsTitle': 'نصائح ذكية',
+    'generatingInsights': 'جاري إنشاء النصائح...',
+    'insights.cost': 'فرصة لتوفير التكاليف',
+    'insights.efficiency': 'نصيحة لتحسين الكفاءة',
+    'insights.trend': 'تم رصد اتجاه جديد',
+    'insights.error': 'تعذر إنشاء النصائح في الوقت الحالي.',
     // Errors
     'loginError': 'البريد الإلكتروني أو كلمة المرور غير صحيحة. يرجى المحاولة مرة أخرى.',
     'error.selectInvoice': 'الرجاء تحديد ملف فاتورة لتحليله.',

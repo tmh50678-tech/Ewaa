@@ -1,7 +1,7 @@
 // FIX: Replaced placeholder content with Gemini API service implementation.
 
 import { GoogleGenAI, Type } from "@google/genai";
-import type { PurchaseRequest, AIAnalysisResult, Invoice, SalesRepresentative, Supplier, PurchaseRequestItem, SupplierSuggestion, AISearchFilters, User, Branch } from '../types';
+import type { PurchaseRequest, AIAnalysisResult, Invoice, SalesRepresentative, Supplier, PurchaseRequestItem, SupplierSuggestion, AISearchFilters, User, Branch, AIInsight } from '../types';
 import { RequestStatus } from '../types';
 import { DEPARTMENTS } from '../constants';
 
@@ -360,4 +360,76 @@ export const getAIsearchFilters = async (
 
     const json = JSON.parse(response.text);
     return json as { filters: AISearchFilters; responseText: string };
+};
+
+export const getAIInsights = async (requests: PurchaseRequest[]): Promise<AIInsight[]> => {
+    if (!process.env.API_KEY) {
+        console.log("Using mock getAIInsights response.");
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        return Promise.resolve([
+            {
+                type: 'cost',
+                title: 'فرصة للشراء بالجملة',
+                description: 'لاحظنا أن فرعي الرياض وجدة يطلبان "لمبات LED" بشكل متكرر. فكر في توحيد هذه الطلبات في طلب شهري واحد للتفاوض على سعر أفضل.'
+            },
+            {
+                type: 'efficiency',
+                title: 'تنبيه لارتفاع التكلفة',
+                description: 'زاد الإنفاق على "حبوب البن عالية الجودة" بنسبة 15% هذا الشهر. نقترح التواصل مع موردين بديلين مثل "Bidfood KSA" للحصول على أسعار تنافسية.'
+            },
+             {
+                type: 'trend',
+                title: 'اتجاه جديد',
+                description: 'هناك طلب متزايد على "لوازم تنظيف صديقة للبيئة". هذا يتماشى مع أهداف الاستدامة. نوصي بإضافتها إلى كتالوج الأصناف الرسمي.'
+            }
+        ]);
+    }
+    
+    const model = 'gemini-2.5-flash';
+
+    const simplifiedRequests = requests.map(r => ({
+        branch: r.branch.name,
+        department: r.department,
+        totalCost: r.totalEstimatedCost,
+        items: r.items.map(i => ({ name: i.name, category: i.category, cost: i.estimatedCost, quantity: i.quantity }))
+    }));
+
+    const prompt = `
+        You are a procurement analyst AI for a hotel chain. Analyze the following recent purchase requests and provide 2-3 actionable insights.
+        Focus on identifying:
+        1.  **Cost-saving opportunities:** Look for frequently ordered items across different branches that could be bought in bulk for a discount.
+        2.  **Efficiency improvements:** Identify bottlenecks or suggest ways to streamline purchasing.
+        3.  **Emerging trends:** Notice if there's a growing demand for a new type of item that might be worth standardizing.
+        
+        For each insight, provide a 'type' ('cost', 'efficiency', or 'trend'), a short 'title', and a concise 'description'.
+        All text output (title and description) MUST be in Arabic.
+
+        Here is the data for the most recent purchase requests:
+        ${JSON.stringify(simplifiedRequests, null, 2)}
+
+        Return the response as a JSON array.
+    `;
+    
+    const response = await ai.models.generateContent({
+        model,
+        contents: prompt,
+        config: {
+            responseMimeType: "application/json",
+            responseSchema: {
+                type: Type.ARRAY,
+                items: {
+                    type: Type.OBJECT,
+                    properties: {
+                        type: { type: Type.STRING, description: "The type of insight: 'cost', 'efficiency', or 'trend'." },
+                        title: { type: Type.STRING, description: "A short title for the insight in Arabic." },
+                        description: { type: Type.STRING, description: "A concise description of the insight in Arabic." }
+                    },
+                    required: ["type", "title", "description"]
+                }
+            }
+        }
+    });
+
+    const json = JSON.parse(response.text);
+    return json as AIInsight[];
 };

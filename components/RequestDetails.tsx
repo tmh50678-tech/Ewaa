@@ -1,5 +1,3 @@
-
-
 import React, { useRef } from 'react';
 import type { PurchaseRequest } from '../types';
 import { RequestStatus } from '../types';
@@ -13,6 +11,7 @@ import { useRequestActions } from '../hooks/useRequestActions';
 interface RequestDetailsProps {
   request: PurchaseRequest;
   onClose: () => void;
+  onEdit: (request: PurchaseRequest) => void;
 }
 
 const DetailSection: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => (
@@ -22,7 +21,7 @@ const DetailSection: React.FC<{ title: string; children: React.ReactNode }> = ({
     </div>
 );
 
-const RequestDetails: React.FC<RequestDetailsProps> = ({ request, onClose }) => {
+const RequestDetails: React.FC<RequestDetailsProps> = ({ request, onClose, onEdit }) => {
     const { t, language } = useTranslation();
     const { currentUser } = useAppContext();
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -30,6 +29,7 @@ const RequestDetails: React.FC<RequestDetailsProps> = ({ request, onClose }) => 
     const {
         approve,
         reject,
+        returnForModification,
         markAsPurchased,
         completeBankRound,
         addAttachment,
@@ -52,7 +52,10 @@ const RequestDetails: React.FC<RequestDetailsProps> = ({ request, onClose }) => 
     const actionTranslationMap: { [key: string]: string } = {
         'Submitted': t('submitted'),
         'Approved': t('approved'),
-        'Rejected': t('rejected'),
+        // FIX: Use 'action.rejected' to get the correct translation for the 'rejected' action, distinguishing it from the status.
+        'Rejected': t('action.rejected'),
+        'Returned for Modification': t('returnedForModification'),
+        'Resubmitted': t('resubmitted'),
         'Marked as Purchased': t('markedAsPurchased'),
         'Processed Invoice': t('processedInvoice'),
         'Bank Round Completed': t('bankRoundCompleted'),
@@ -60,9 +63,20 @@ const RequestDetails: React.FC<RequestDetailsProps> = ({ request, onClose }) => 
     
     const showSupplierInfo = request.status === RequestStatus.PENDING_PURCHASE && currentUser.role === ROLES.PURCHASING_REP;
     const showActionFooter = canApproveOrReject || canMarkAsPurchased || canCompleteBankRound;
-    
+    const canEdit = request.status === RequestStatus.DRAFT && (currentUser?.id === request.requester.id || currentUser?.role === ROLES.ADMIN);
+
     return (
         <div className="h-full flex flex-col">
+             {canEdit && (
+                <div className="p-4 border-b border-pink-500/20 bg-pink-900/30 flex-shrink-0">
+                    <button
+                        onClick={() => onEdit(request)}
+                        className="w-full rounded-lg bg-pink-600 px-6 py-3 text-center text-base font-semibold text-white shadow-md transition-all hover:bg-pink-500 hover:shadow-lg hover:shadow-pink-500/30"
+                    >
+                        {t('editRequest')}
+                    </button>
+                </div>
+            )}
             <div className="flex-grow overflow-y-auto p-4">
                 <div className="flex justify-between items-start mb-4">
                     <div className="text-center md:text-left flex-grow">
@@ -250,6 +264,12 @@ const RequestDetails: React.FC<RequestDetailsProps> = ({ request, onClose }) => 
                                     className="flex-1 rounded-lg bg-green-600 px-6 py-3 text-center text-base font-semibold text-white shadow-md transition-all hover:bg-green-500 hover:shadow-lg hover:shadow-green-500/30"
                                 >
                                     {t('approve')}
+                                </button>
+                                <button
+                                    onClick={returnForModification}
+                                    className="flex-1 rounded-lg bg-yellow-600 px-6 py-3 text-center text-base font-semibold text-white shadow-md transition-all hover:bg-yellow-500 hover:shadow-lg hover:shadow-yellow-500/30"
+                                >
+                                    {t('returnForModification')}
                                 </button>
                                 <button
                                     onClick={reject}

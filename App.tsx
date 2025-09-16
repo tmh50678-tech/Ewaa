@@ -1,7 +1,5 @@
 
-
-
-import React, { createContext, useState, useContext } from 'react';
+import React, { createContext, useState, useContext, useEffect } from 'react';
 import { Routes, Route, useNavigate, Navigate } from 'react-router-dom';
 import type { PurchaseRequest, User, RoleDefinition, Branch, CatalogItem, Supplier, SalesRepresentative } from './types';
 import Login from './components/Login';
@@ -72,20 +70,86 @@ const AppContent: React.FC = () => {
   );
 }
 
+// --- START: ENHANCED FOR STATE PERSISTENCE ---
+const PURCHASE_REQUESTS_STORAGE_KEY = 'ewaa-purchase-requests';
+const USERS_STORAGE_KEY = 'ewaa-users';
+const ROLES_STORAGE_KEY = 'ewaa-roles';
+const BRANCHES_STORAGE_KEY = 'ewaa-branches';
+const SUPPLIERS_STORAGE_KEY = 'ewaa-suppliers';
+const ITEM_CATALOG_STORAGE_KEY = 'ewaa-item-catalog';
+
+// Helper to save state to localStorage with error handling
+function saveState<T>(key: string, value: T) {
+    try {
+        localStorage.setItem(key, JSON.stringify(value));
+    } catch (error) {
+        console.error(`Failed to save state for key "${key}":`, error);
+    }
+}
+
+// Helper to get initial state from localStorage or use a default value
+function getInitialState<T>(key: string, defaultValue: T): T {
+    try {
+        const savedItem = localStorage.getItem(key);
+        if (savedItem) {
+            return JSON.parse(savedItem);
+        }
+        // If no saved item, save the default value for next time
+        saveState(key, defaultValue);
+        return defaultValue;
+    } catch (error) {
+        console.error(`Failed to load state for key "${key}":`, error);
+        // Don't try to save if loading fails, just return default
+        return defaultValue;
+    }
+}
+// --- END: ENHANCED FOR STATE PERSISTENCE ---
+
+
 // 4. THE APP COMPONENT BECOMES THE PROVIDER
 const App: React.FC = () => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [originalUser, setOriginalUser] = useState<User | null>(null);
-  const [purchaseRequests, setPurchaseRequests] = useState<PurchaseRequest[]>(MOCK_REQUESTS);
-  const [users, setUsers] = useState<User[]>(INITIAL_USERS);
-  const [roles, setRoles] = useState<RoleDefinition[]>(INITIAL_ROLE_DEFINITIONS);
-  const [branches, setBranches] = useState<Branch[]>(MOCK_BRANCHES);
-  const [itemCatalog, setItemCatalog] = useState<CatalogItem[]>(INITIAL_ITEM_CATALOG);
-  const [suppliers, setSuppliers] = useState<Supplier[]>(INITIAL_SUPPLIERS);
+  
+  // --- START: MODIFIED FOR STATE PERSISTENCE ---
+  const [purchaseRequests, setPurchaseRequests] = useState<PurchaseRequest[]>(() => getInitialState(PURCHASE_REQUESTS_STORAGE_KEY, MOCK_REQUESTS));
+  const [users, setUsers] = useState<User[]>(() => getInitialState(USERS_STORAGE_KEY, INITIAL_USERS));
+  const [roles, setRoles] = useState<RoleDefinition[]>(() => getInitialState(ROLES_STORAGE_KEY, INITIAL_ROLE_DEFINITIONS));
+  const [branches, setBranches] = useState<Branch[]>(() => getInitialState(BRANCHES_STORAGE_KEY, MOCK_BRANCHES));
+  const [itemCatalog, setItemCatalog] = useState<CatalogItem[]>(() => getInitialState(ITEM_CATALOG_STORAGE_KEY, INITIAL_ITEM_CATALOG));
+  const [suppliers, setSuppliers] = useState<Supplier[]>(() => getInitialState(SUPPLIERS_STORAGE_KEY, INITIAL_SUPPLIERS));
+  // --- END: MODIFIED FOR STATE PERSISTENCE ---
+
   const [toast, setToast] = useState<string | null>(null);
   
   const { t, language } = useTranslation();
   const navigate = useNavigate();
+
+  // --- START: ADDED FOR STATE PERSISTENCE ---
+  useEffect(() => {
+    saveState(PURCHASE_REQUESTS_STORAGE_KEY, purchaseRequests);
+  }, [purchaseRequests]);
+
+  useEffect(() => {
+    saveState(USERS_STORAGE_KEY, users);
+  }, [users]);
+
+  useEffect(() => {
+    saveState(ROLES_STORAGE_KEY, roles);
+  }, [roles]);
+
+  useEffect(() => {
+    saveState(BRANCHES_STORAGE_KEY, branches);
+  }, [branches]);
+  
+  useEffect(() => {
+    saveState(ITEM_CATALOG_STORAGE_KEY, itemCatalog);
+  }, [itemCatalog]);
+
+  useEffect(() => {
+    saveState(SUPPLIERS_STORAGE_KEY, suppliers);
+  }, [suppliers]);
+  // --- END: ADDED FOR STATE PERSISTENCE ---
 
   const showToast = (message: string) => {
     setToast(message);

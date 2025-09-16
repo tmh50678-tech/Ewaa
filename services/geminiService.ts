@@ -67,28 +67,28 @@ export const analyzeInvoice = async (
         console.log("Using mock analyzeInvoice response.");
         return Promise.resolve({
             extractedData: {
-                vendorName: 'Mock Vendor',
+                vendorName: 'مورد تجريبي',
                 invoiceNumber: `MV-${Date.now()}`,
                 invoiceDate: new Date().toISOString().split('T')[0],
                 totalAmount: Math.floor(Math.random() * 2000) + 500,
                  items: [
-                    { itemName: 'Luxury Bath Towels', price: 24, unit: 'piece', category: 'Linens' },
-                    { itemName: 'High-Quality Coffee Beans', price: 45, unit: 'kg', category: 'F&B' },
+                    { itemName: 'مناشف حمام فاخرة', price: 24, unit: 'قطعة', category: 'البياضات' },
+                    { itemName: 'حبوب بن عالية الجودة', price: 45, unit: 'كجم', category: 'الأغذية والمشروبات' },
                 ],
                 salesRepresentative: {
-                    name: "Mock Rep",
+                    name: "مندوب تجريبي",
                     contact: "0500000000"
                 }
             },
             duplicateCheck: {
                 isDuplicate: false,
-                reason: 'This is a mock response. No duplicate check performed.',
+                reason: 'هذه استجابة تجريبية. لم يتم إجراء فحص للتكرار.',
             },
             priceCheck: {
-                overallAssessment: 'Mock analysis: Prices are generally reasonable, though one item is slightly above the estimated market rate.',
+                overallAssessment: 'تحليل تجريبي: الأسعار معقولة بشكل عام، على الرغم من أن أحد الأصناف أعلى قليلاً من سعر السوق المقدر.',
                 priceAnalysis: [
-                    { itemName: 'Luxury Bath Towels', price: 24, isOverpriced: false, marketPriceComparison: 'Price is within the expected range (SAR 22-26).' },
-                    { itemName: 'High-Quality Coffee Beans', price: 45, isOverpriced: true, marketPriceComparison: 'Slightly above average market price. Expected range is SAR 38-42.' },
+                    { itemName: 'مناشف حمام فاخرة', price: 24, isOverpriced: false, marketPriceComparison: 'السعر ضمن النطاق المتوقع (22-26 ريال سعودي).' },
+                    { itemName: 'حبوب بن عالية الجودة', price: 45, isOverpriced: true, marketPriceComparison: 'أعلى قليلاً من متوسط سعر السوق. النطاق المتوقع هو 38-42 ريال سعودي.' },
                 ],
             },
         });
@@ -105,14 +105,15 @@ export const analyzeInvoice = async (
     
     const textPart = {
         text: `
-            Analyze this invoice for a hotel procurement system.
-            1. Extract the vendor name, invoice number, invoice date, total amount, and a list of items.
-            2. For each item, extract its name, price, unit, and determine its category from this list: F&B, Maintenance, Linens, Engineering, Housekeeping, Furniture, Plumbing & Heating, Electrical, Painting & Decoration.
-            3. If you find a sales representative's name and contact number on the invoice, extract it into the 'salesRepresentative' object.
-            4. Check if this invoice is a potential duplicate. Here is a list of existing invoice numbers: ${JSON.stringify(existingInvoices.map(inv => inv.invoiceNumber))}. An invoice is a duplicate if it has the same invoice number as an existing one.
-            5. For each item, act as a procurement specialist. Estimate a reasonable market price range in SAR (e.g., "SAR 100-120"). Compare the item's price to this range. In the 'marketPriceComparison' field, state if the price is reasonable, high, or low, and YOU MUST include the estimated price range you used for comparison.
-            6. Based on the individual item analysis, provide a brief, one-sentence overall assessment of the invoice's pricing in the 'overallAssessment' field.
-            Return the result in JSON format.
+            حلل هذه الفاتورة لنظام مشتريات فندقي.
+            1. استخرج اسم المورد، رقم الفاتورة، تاريخ الفاتورة، المبلغ الإجمالي، وقائمة الأصناف.
+            2. لكل صنف، استخرج اسمه، سعره، وحدته، وحدد فئته من هذه القائمة: الأغذية والمشروبات، الصيانة، البياضات، الهندسة، التدبير المنزلي، الأثاث، السباكة والتدفئة، الكهرباء، الدهان والديكور.
+            3. إذا وجدت اسم مندوب مبيعات ورقم اتصال في الفاتورة، استخرجه في كائن 'salesRepresentative'.
+            4. تحقق مما إذا كانت هذه الفاتورة نسخة مكررة محتملة. إليك قائمة بأرقام الفواتير الحالية: ${JSON.stringify(existingInvoices.map(inv => inv.invoiceNumber))}. تعتبر الفاتورة مكررة إذا كان لها نفس رقم فاتورة موجودة.
+            5. لكل صنف، تصرف كأخصائي مشتريات. قدر نطاق سعر سوق معقول بالريال السعودي (مثال: "100-120 ريال سعودي"). قارن سعر الصنف بهذا النطاق. في حقل 'marketPriceComparison'، اذكر ما إذا كان السعر معقولاً، مرتفعاً، أو منخفضاً، ويجب أن تدرج نطاق السعر التقديري الذي استخدمته للمقارنة.
+            6. بناءً على تحليل الأصناف الفردية، قدم تقييماً عاماً موجزاً من جملة واحدة لتسعير الفاتورة في حقل 'overallAssessment'.
+            يجب أن تكون جميع الردود النصية باللغة العربية.
+            أعد النتيجة بتنسيق JSON.
         `
     };
 
@@ -170,26 +171,27 @@ export const getSupplierSuggestions = async (
         // Simulate a delay
         await new Promise(resolve => setTimeout(resolve, 1500));
         return Promise.resolve([
-            { supplierName: suppliers[0]?.name || 'Mock F&B Supplier', justification: 'Recommended for F&B items based on their category.' },
-            { supplierName: suppliers[1]?.name || 'Mock Maintenance Supplier', justification: 'This supplier specializes in maintenance and engineering parts.' }
+            { supplierName: suppliers[0]?.name || 'مورد أغذية ومشروبات تجريبي', justification: 'موصى به لأصناف الأغذية والمشروبات بناءً على فئتهم.' },
+            { supplierName: suppliers[1]?.name || 'مورد صيانة تجريبي', justification: 'هذا المورد متخصص في قطع غيار الصيانة والهندسة.' }
         ]);
     }
 
     const model = 'gemini-2.5-flash';
 
     const prompt = `
-        As a procurement expert for a hotel chain, your task is to recommend the best suppliers for a given purchase request.
+        بصفتك خبير مشتريات لسلسلة فنادق، مهمتك هي التوصية بأفضل الموردين لطلب شراء معين.
         
-        Here are the items in the current purchase request:
+        إليك الأصناف في طلب الشراء الحالي:
         ${JSON.stringify(items.map(item => ({ name: item.name, category: item.category, quantity: item.quantity })), null, 2)}
 
-        Here is the list of available suppliers for the hotel's branch:
+        وهذه قائمة الموردين المتاحين لفرع الفندق:
         ${JSON.stringify(suppliers.map(s => ({ name: s.name, category: s.category, notes: s.notes })), null, 2)}
 
-        Based on the item categories and supplier specializations, please recommend up to 3 of the most suitable suppliers from the provided list. 
-        For each recommendation, provide a brief justification explaining why they are a good fit (e.g., "specializes in F&B", "is a national distributor for maintenance parts", "has positive notes for this branch").
+        بناءً على فئات الأصناف وتخصصات الموردين، يرجى التوصية بما يصل إلى 3 من أنسب الموردين من القائمة المتوفرة.
+        لكل توصية، قدم مبررًا موجزًا يشرح سبب كونهم مناسبين (على سبيل المثال: "متخصص في الأغذية والمشروبات"، "موزع وطني لقطع غيار الصيانة"، "لديه ملاحظات إيجابية لهذا الفرع").
+        يجب أن تكون جميع المبررات باللغة العربية.
         
-        Return the result as a JSON array.
+        أعد النتيجة كمصفوفة JSON.
     `;
 
     const response = await ai.models.generateContent({
@@ -225,10 +227,10 @@ export const generateMonthlyReport = async (
     if (!process.env.API_KEY) {
         // MOCK IMPLEMENTATION
         console.log("Using mock generateMonthlyReport response.");
-        return Promise.resolve(`This is a mock AI analysis for ${branchName} for ${month}.
-- Overall spending seems to be focused on Maintenance.
-- Suggest exploring bulk discounts for frequently purchased items like 'LED Light Bulbs'.
-- No major anomalies detected.`);
+        return Promise.resolve(`هذا تحليل ذكاء اصطناعي تجريبي لـ ${branchName} لشهر ${month}.
+- يبدو أن الإنفاق العام يتركز على قسم الصيانة.
+- نقترح استكشاف خصومات الشراء بالجملة للأصناف التي يتم شراؤها بشكل متكرر مثل 'لمبات LED'.
+- لم يتم الكشف عن أي حالات شاذة كبيرة.`);
     }
 
 
@@ -241,11 +243,11 @@ export const generateMonthlyReport = async (
     }));
 
     const prompt = `
-        Generate a concise monthly expense report analysis for ${branchName} for the month of ${month}.
-        Based on the following purchase request data, provide key insights, identify spending trends, and suggest potential cost-saving opportunities.
-        Keep the analysis to 3-4 bullet points. Be insightful and brief.
+        أنشئ تحليلاً موجزاً لتقرير المصروفات الشهري لـ ${branchName} لشهر ${month}.
+        بناءً على بيانات طلبات الشراء التالية، قدم رؤى أساسية، وحدد اتجاهات الإنفاق، واقترح فرصاً محتملة لتوفير التكاليف.
+        اجعل التحليل في 3-4 نقاط. كن ثاقبًا وموجزًا. يجب أن يكون التحليل بالكامل باللغة العربية.
 
-        Data:
+        البيانات:
         ${JSON.stringify(simplifiedRequests, null, 2)}
     `;
 

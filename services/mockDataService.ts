@@ -24,7 +24,7 @@ const BRANCH_IDS = {
 };
 const ALL_BRANCH_IDS = Object.values(BRANCH_IDS);
 
-export const USERS: User[] = [
+export const INITIAL_USERS: User[] = [
   { id: 1, name: 'Alice (Requester)', email: 'alice@ewaa.com', password: 'password123', role: ROLES.REQUESTER, branches: ['branch-1', 'branch-2'] },
   { id: 2, name: 'Bob (Hotel Manager)', email: 'bob@ewaa.com', password: 'password123', role: ROLES.HOTEL_MANAGER, branches: ['branch-1'] },
   { id: 3, name: 'Charlie (Purchasing Rep)', email: 'charlie@ewaa.com', password: 'password123', role: ROLES.PURCHASING_REP, branches: ALL_BRANCH_IDS },
@@ -97,7 +97,7 @@ export const SUPPLIERS = INITIAL_SUPPLIERS;
 export const MOCK_REQUESTS: PurchaseRequest[] = [
   {
     id: 'pr-123456',
-    requester: USERS[0],
+    requester: INITIAL_USERS[0],
     status: RequestStatus.PENDING_HM_APPROVAL,
     items: [
       { id: 'item-1', name: 'Luxury Bath Towels', quantity: 50, unit: 'piece', estimatedCost: 25, category: 'Linens', justification: 'Replacing worn out towels in premium suites.' },
@@ -106,14 +106,14 @@ export const MOCK_REQUESTS: PurchaseRequest[] = [
     totalEstimatedCost: (50 * 25) + (20 * 40),
     createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
     approvalHistory: [
-      { user: USERS[0], action: 'Submitted', timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000) }
+      { user: INITIAL_USERS[0], action: 'Submitted', timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000) }
     ],
     department: 'Housekeeping',
     branch: MOCK_BRANCHES[0],
   },
   {
     id: 'pr-789012',
-    requester: USERS[0],
+    requester: INITIAL_USERS[0],
     status: RequestStatus.COMPLETED,
     items: [
       { id: 'item-3', name: 'LED Light Bulbs', quantity: 200, unit: 'piece', estimatedCost: 5, category: 'Maintenance', justification: 'Energy saving initiative for all corridors.' },
@@ -121,17 +121,17 @@ export const MOCK_REQUESTS: PurchaseRequest[] = [
     totalEstimatedCost: 200 * 5,
     createdAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
     approvalHistory: [
-        { user: USERS[0], action: 'Submitted', timestamp: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000) },
-        { user: USERS[1], action: 'Approved', timestamp: new Date(Date.now() - 9 * 24 * 60 * 60 * 1000) },
-        { user: USERS[3], action: 'Approved', timestamp: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000) },
-        { user: USERS[5], action: 'Approved', timestamp: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000) },
+        { user: INITIAL_USERS[0], action: 'Submitted', timestamp: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000) },
+        { user: INITIAL_USERS[1], action: 'Approved', timestamp: new Date(Date.now() - 9 * 24 * 60 * 60 * 1000) },
+        { user: INITIAL_USERS[3], action: 'Approved', timestamp: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000) },
+        { user: INITIAL_USERS[5], action: 'Approved', timestamp: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000) },
     ],
     department: 'Maintenance',
     branch: MOCK_BRANCHES[1],
   },
   {
     id: 'pr-345678',
-    requester: USERS[1],
+    requester: INITIAL_USERS[1],
     status: RequestStatus.DRAFT,
     items: [
       { id: 'item-4', name: 'New Lobby Furniture Set', quantity: 1, unit: 'set', estimatedCost: 15000, category: 'Furniture', justification: 'Complete lobby renovation project.' },
@@ -144,7 +144,7 @@ export const MOCK_REQUESTS: PurchaseRequest[] = [
   },
    {
     id: 'pr-999999',
-    requester: USERS[0],
+    requester: INITIAL_USERS[0],
     status: RequestStatus.PENDING_INVOICE,
     items: [
       { id: 'item-5', name: 'Cleaning Supplies', quantity: 10, unit: 'bottle', estimatedCost: 100, category: 'Housekeeping', justification: 'Monthly restock' },
@@ -152,9 +152,9 @@ export const MOCK_REQUESTS: PurchaseRequest[] = [
     totalEstimatedCost: 1000,
     createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
     approvalHistory: [
-         { user: USERS[0], action: 'Submitted', timestamp: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000) },
-         { user: USERS[1], action: 'Approved', timestamp: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000) },
-         { user: USERS[2], action: 'Marked as Purchased', timestamp: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000) },
+         { user: INITIAL_USERS[0], action: 'Submitted', timestamp: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000) },
+         { user: INITIAL_USERS[1], action: 'Approved', timestamp: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000) },
+         { user: INITIAL_USERS[2], action: 'Marked as Purchased', timestamp: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000) },
     ],
     // FIX: Added missing 'department' and 'branch' properties to satisfy the PurchaseRequest type.
     department: 'Housekeeping',

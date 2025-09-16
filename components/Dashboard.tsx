@@ -25,6 +25,7 @@ const Dashboard: React.FC = () => {
         purchaseRequests: requests, 
         originalUser: isImpersonating, 
         handleRevertLogin,
+        handleLoginAs,
         branches,
     } = useAppContext();
     
@@ -173,7 +174,6 @@ const Dashboard: React.FC = () => {
                         isOpen={isSettingsOpen}
                         onClose={() => setIsSettingsOpen(false)}
                         onLoginAs={(user) => {
-                            const { handleLoginAs } = useAppContext();
                             handleLoginAs(user);
                             setIsSettingsOpen(false);
                         }}

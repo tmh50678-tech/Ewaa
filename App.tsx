@@ -1,10 +1,11 @@
 
+
 import React, { createContext, useState, useContext } from 'react';
 import { Routes, Route, useNavigate, Navigate } from 'react-router-dom';
 import type { PurchaseRequest, User, RoleDefinition, Branch, CatalogItem, Supplier, SalesRepresentative } from './types';
 import Login from './components/Login';
 import Dashboard from './components/Dashboard';
-import { USERS as INITIAL_USERS, MOCK_REQUESTS, MOCK_BRANCHES, INITIAL_SUPPLIERS } from './services/mockDataService';
+import { INITIAL_USERS, MOCK_REQUESTS, MOCK_BRANCHES, INITIAL_SUPPLIERS } from './services/mockDataService';
 import { INITIAL_ITEM_CATALOG } from './services/catalog';
 import { INITIAL_ROLE_DEFINITIONS, ROLES } from './constants';
 import { useTranslation } from './i18n';

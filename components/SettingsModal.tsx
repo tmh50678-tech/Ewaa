@@ -15,6 +15,22 @@ interface SettingsModalProps {
 
 type SettingsTab = 'users' | 'roles' | 'branches' | 'suppliers';
 
+const PasswordToggle: React.FC<{show: boolean, onToggle: () => void}> = ({show, onToggle}) => (
+    <button
+        type="button"
+        onClick={onToggle}
+        className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+        aria-label={show ? "Hide password" : "Show password"}
+    >
+        {show ? (
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a9.97 9.97 0 01-1.563 3.029m-2.201-4.209A3.004 3.004 0 0012 15a3 3 0 100-6 3 3 0 00-1.354.362" /></svg>
+        ) : (
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.522 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.478 0-8.268-2.943-9.542-7z" /></svg>
+        )}
+    </button>
+);
+
+
 const SettingsModal: React.FC<SettingsModalProps> = ({
     isOpen,
     onClose,
@@ -42,6 +58,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
     const [newUserName, setNewUserName] = useState('');
     const [newUserEmail, setNewUserEmail] = useState('');
     const [newUserPassword, setNewUserPassword] = useState('');
+    const [showNewUserPassword, setShowNewUserPassword] = useState(false);
     const [newUserRole, setNewUserRole] = useState<Role | string>(ROLES.REQUESTER);
     const [newUserBranches, setNewUserBranches] = useState<string[]>([]);
     
@@ -57,6 +74,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
     
     const [editingUserId, setEditingUserId] = useState<number | null>(null);
     const [editedUserData, setEditedUserData] = useState<User | null>(null);
+    const [showEditUserPassword, setShowEditUserPassword] = useState(false);
 
     const [editingBranchId, setEditingBranchId] = useState<string | null>(null);
     const [editedBranchData, setEditedBranchData] = useState<Branch | null>(null);
@@ -71,6 +89,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
             setNewUserName('');
             setNewUserEmail('');
             setNewUserPassword('');
+            setShowNewUserPassword(false);
             setNewUserRole(ROLES.REQUESTER);
             setNewUserBranches([]);
             setNewRoleName('');
@@ -82,6 +101,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
             setAddingRepToSupplier(null);
             setEditingUserId(null);
             setEditedUserData(null);
+            setShowEditUserPassword(false);
             setEditingBranchId(null);
             setEditedBranchData(null);
             setEditingSupplierName(null);
@@ -92,6 +112,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
     const handleStartEdit = (user: User) => {
         setEditingUserId(user.id);
         setEditedUserData({ ...user });
+        setShowEditUserPassword(false);
     };
 
     const handleCancelEdit = () => {
@@ -301,7 +322,10 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
                                 <>
                                     <td><input type="text" value={editedUserData?.name || ''} onChange={e => handleEditUserChange('name', e.target.value)} className="w-full px-2 py-1 border rounded" /></td>
                                     <td><input type="email" value={editedUserData?.email || ''} onChange={e => handleEditUserChange('email', e.target.value)} className="w-full px-2 py-1 border rounded" /></td>
-                                    <td><input type="text" value={editedUserData?.password || ''} onChange={e => handleEditUserChange('password', e.target.value)} className="w-full px-2 py-1 border rounded" /></td>
+                                    <td className="relative">
+                                        <input type={showEditUserPassword ? 'text' : 'password'} value={editedUserData?.password || ''} onChange={e => handleEditUserChange('password', e.target.value)} className="w-full px-2 py-1 border rounded" />
+                                        <PasswordToggle show={showEditUserPassword} onToggle={() => setShowEditUserPassword(!showEditUserPassword)} />
+                                    </td>
                                     <td>
                                         <select value={editedUserData?.role} onChange={e => handleEditUserChange('role', e.target.value)} className="w-full px-2 py-1 border rounded">
                                             {roles.map(r => <option key={r.name} value={r.name}>{t(r.name)}</option>)}
@@ -330,7 +354,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
                                 <>
                                     <td className="px-4 py-2 whitespace-nowrap text-sm font-medium text-gray-900">{user.name}</td>
                                     <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">{user.email}</td>
-                                    <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">{user.password}</td>
+                                    <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">**********</td>
                                     <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">{t(user.role)}</td>
                                     <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">{user.branches.map(bId => branches.find(b => b.id === bId)?.name).join(', ')}</td>
                                     <td className="px-4 py-2 whitespace-nowrap text-right text-sm font-medium">
@@ -352,7 +376,10 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <input type="text" placeholder={t('userName')} value={newUserName} onChange={e => setNewUserName(e.target.value)} required className="w-full px-3 py-2 border rounded-md" />
                     <input type="email" placeholder={t('email')} value={newUserEmail} onChange={e => setNewUserEmail(e.target.value)} required className="w-full px-3 py-2 border rounded-md" />
-                    <input type="password" placeholder={t('password')} value={newUserPassword} onChange={e => setNewUserPassword(e.target.value)} required className="w-full px-3 py-2 border rounded-md" />
+                    <div className="relative">
+                        <input type={showNewUserPassword ? 'text' : 'password'} placeholder={t('password')} value={newUserPassword} onChange={e => setNewUserPassword(e.target.value)} required className="w-full px-3 py-2 border rounded-md" />
+                        <PasswordToggle show={showNewUserPassword} onToggle={() => setShowNewUserPassword(!showNewUserPassword)} />
+                    </div>
                     <select value={newUserRole} onChange={e => setNewUserRole(e.target.value)} required className="w-full px-3 py-2 border rounded-md">
                         {roles.map(r => <option key={r.name} value={r.name}>{t(r.name)}</option>)}
                     </select>

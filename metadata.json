@@ -1,0 +1,5 @@
+{
+  "name": "AI Hotel Purchasing System",
+  "description": "A streamlined purchasing and invoicing system for hotels, integrated with AI to prevent duplicate invoices and ensure market-rate pricing. It manages a multi-level approval workflow for transparency and compliance.",
+  "requestFramePermissions": []
+}

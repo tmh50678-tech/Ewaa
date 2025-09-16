@@ -1,0 +1,75 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EWAA HOTELS | Procurement System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: {
+                '50': '#f0f9ff',
+                '100': '#e0f2fe',
+                '200': '#bae6fd',
+                '300': '#7dd3fc',
+                '400': '#38bdf8',
+                '500': '#0ea5e9',
+                '600': '#0284c7',
+                '700': '#0369a1',
+                '800': '#075985',
+                '900': '#0c4a6e',
+                '950': '#082f49',
+              },
+              accent: {
+                '50': '#fff7ed',
+                '100': '#ffedd5',
+                '200': '#fed7aa',
+                '300': '#fdba74',
+                '400': '#fb923c',
+                '500': '#f97316',
+                '600': '#ea580c',
+                '700': '#c2410c',
+                '800': '#9a3412',
+                '900': '#7c2d12',
+                '950': '#431407',
+              },
+            },
+            keyframes: {
+              'fade-in-up': {
+                '0%': { opacity: '0', transform: 'translateY(20px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' },
+              },
+            },
+            animation: {
+              'fade-in-up': 'fade-in-up 0.4s ease-out forwards',
+            },
+          }
+        }
+      }
+    </script>
+  <script type="importmap">
+{
+  "imports": {
+    "react": "https://aistudiocdn.com/react@^19.1.1",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.1.1/",
+    "react/": "https://aistudiocdn.com/react@^19.1.1/",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.19.0",
+    "react-router-dom": "https://aistudiocdn.com/react-router-dom@^6.25.1",
+    "react-router-dom/": "https://aistudiocdn.com/react-router-dom@^6.25.1/",
+    "focus-trap-react": "https://aistudiocdn.com/focus-trap-react@^10.2.3",
+    "@dnd-kit/core": "https://aistudiocdn.com/@dnd-kit/core@^6.1.0",
+    "@dnd-kit/sortable": "https://aistudiocdn.com/@dnd-kit/sortable@^8.0.0"
+  }
+}
+</script>
+</head>
+  <body class="bg-gray-100">
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>
